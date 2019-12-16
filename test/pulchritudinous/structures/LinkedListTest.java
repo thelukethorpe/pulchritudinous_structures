@@ -2,6 +2,7 @@ package pulchritudinous.structures;
 
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import static junit.framework.TestCase.assertFalse;
@@ -9,6 +10,7 @@ import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 public class LinkedListTest {
 
@@ -256,5 +258,42 @@ public class LinkedListTest {
     assertTrue(linkedList.contains("Something in particular"));
     assertTrue(linkedList.contains("Something else"));
     assertTrue(linkedList.contains("Another thing"));
+  }
+
+  @Test
+  public void isNotEqualToListOfDifferentType() {
+    linkedList.add("Something");
+    LinkedList<Integer> anotherLinkedList = new LinkedList<>();
+    anotherLinkedList.add(42);
+
+    assertThat(linkedList, is(not(anotherLinkedList)));
+  }
+
+  @Test
+  public void isEqualToListWithSameOrderAndContents() {
+    linkedList.add("Something in particular");
+    linkedList.add("Something else");
+    linkedList.add("Another thing");
+
+    LinkedList<String> anotherLinkedList = new LinkedList<>();
+    anotherLinkedList.add("Something in particular");
+    anotherLinkedList.add("Something else");
+    anotherLinkedList.add("Another thing");
+
+    assertThat(linkedList, is(anotherLinkedList));
+    assertThat(linkedList.hashCode(), is(anotherLinkedList.hashCode()));
+  }
+
+  @Test
+  public void conversionToArrayRetainsOrderAndContents() {
+    /* Adds 1000 random items to the list. */
+    String[] contents = new String[1000];
+    for (int i = 0; i < 1000; i++) {
+      String item = "" + random.nextInt();
+      linkedList.add(item);
+      contents[i] = item;
+    }
+
+    assertTrue(Arrays.equals(contents, linkedList.toArray()));
   }
 }

@@ -1,6 +1,8 @@
 package pulchritudinous.structures;
 
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -14,6 +16,45 @@ public class LinkedList<E>
     this.head = new Node(null);
     this.tail = new Node(null);
     this.resetToEmptyState();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    } else if (obj instanceof LinkedList) {
+
+      LinkedList that = (LinkedList) obj;
+      if (this.size != that.size) {
+        return false;
+      }
+
+      Iterator thisIterator = this.iterator();
+      for (Object thatItem : that) {
+        Object thisItem = thisIterator.next();
+        if (!thisItem.equals(thatItem)) {
+          return false;
+        }
+      }
+
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @Override
+  public int hashCode() {
+    return Arrays.hashCode(this.toArray());
+  }
+
+  public Object[] toArray() {
+    Object[] array = new Object[size];
+    int index = 0;
+    for (Object item : this) {
+      array[index++] = item;
+    }
+    return array;
   }
 
   private void resetToEmptyState() {
