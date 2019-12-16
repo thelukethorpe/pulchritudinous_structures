@@ -103,6 +103,20 @@ public class LinkedList<E> {
     return pollCollection;
   }
 
+  public E poll() {
+    if (this.isEmpty()) {
+      return null;
+    }
+
+    E first = this.first();
+    head.setNext(head.next.next);
+    return first;
+  }
+
+  public E first() {
+    return head.next.item;
+  }
+
   private class Node {
     private final E item;
     private Node prev, next;

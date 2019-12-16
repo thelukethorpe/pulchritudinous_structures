@@ -139,4 +139,26 @@ public class LinkedListTest {
       assertTrue(linkedList.contains("" + i));
     }
   }
+
+  @Test
+  public void returnsNullAfterEmptyPoll() {
+    assertThat(new LinkedList<>().poll(), is((Object) null));
+    assertThat(new LinkedList<>().poll(), is((Object) null));
+  }
+
+  @Test
+  public void doesNotContainFirstItemAfterBeingPolled() {
+    linkedList.add("Something in particular");
+    linkedList.add("Something else");
+    linkedList.add("Another thing");
+
+    assertThat(linkedList.first(), is("Something in particular"));
+    assertThat(linkedList.poll(), is("Something in particular"));
+    assertThat(linkedList.poll(), is("Something else"));
+    assertThat(linkedList.first(), is("Another thing"));
+
+    assertFalse(linkedList.contains("Something in particular"));
+    assertFalse(linkedList.contains("Something else"));
+    assertTrue(linkedList.contains("Another thing"));
+  }
 }
