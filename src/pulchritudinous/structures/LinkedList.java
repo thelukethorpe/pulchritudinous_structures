@@ -1,11 +1,22 @@
 package pulchritudinous.structures;
 
-public class LinkedList {
+public class LinkedList<E> {
+
+  private int size;
+
+  public LinkedList() {
+    this.size = 0;
+  }
+
   public boolean isEmpty() {
-    return true;
+    return size == 0;
   }
 
   public int size() {
-    return 0;
+    return size;
+  }
+
+  public void add(E item) {
+    this.size++;
   }
 }
