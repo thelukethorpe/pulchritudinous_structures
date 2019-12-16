@@ -1,23 +1,28 @@
 package pulchritudinous.structures;
 
 import java.util.Iterator;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class LinkedList<E>
-  implements Iterable<E> {
+    implements Iterable<E> {
 
   private final Node head, tail;
   private int size;
 
   public LinkedList() {
-    this.size = 0;
     this.head = new Node(null);
     this.tail = new Node(null);
-    this.head.setNext(this.tail);
+    this.resetToEmptyState();
+  }
+
+  private void resetToEmptyState() {
+    head.setNext(tail);
+    size = 0;
   }
 
   private Node findByItem(E item) {
-    for (Node curr = head.next; curr != tail; curr = curr.next){
+    for (Node curr = head.next; curr != tail; curr = curr.next) {
       if (curr.item.equals(item)) {
         return curr;
       }
@@ -26,7 +31,7 @@ public class LinkedList<E>
   }
 
   private Node findByIndex(int index) {
-    assert(isValidIndex(index));
+    assert (isValidIndex(index));
     int midpoint = (size >> 1);
     if (index <= midpoint) {
       return head.walkForwards(index + 1);
@@ -69,7 +74,7 @@ public class LinkedList<E>
   }
 
   public void removeAll(E item) {
-    for (Node curr = head.next; curr != tail; curr = curr.next){
+    for (Node curr = head.next; curr != tail; curr = curr.next) {
       if (curr.item.equals(item)) {
         curr.removeFromList();
       }
@@ -92,17 +97,11 @@ public class LinkedList<E>
       return null;
     }
 
-    LinkedList<E> pollCollection = new LinkedList<>();
-    Node node = findByIndex(n);
-
-    pollCollection.head.setNext(head.next);
-    pollCollection.tail.setPrev(node.prev);
-    pollCollection.size = n;
-
-    this.head.setNext(node);
-    this.size = size - n;
-
-    return pollCollection;
+    LinkedList<E> that = new LinkedList<>();
+    for (int i = 0; i < n; i++) {
+      that.add(this.poll());
+    }
+    return that;
   }
 
   public E poll() {
@@ -110,9 +109,9 @@ public class LinkedList<E>
       return null;
     }
 
-    E first = this.first();
-    head.setNext(head.next.next);
-    return first;
+    Node first = head.next;
+    first.removeFromList();
+    return first.item;
   }
 
   public E first() {
@@ -122,7 +121,6 @@ public class LinkedList<E>
   @Override
   public Iterator<E> iterator() {
     return new Iterator<E>() {
-
       private Node curr = head.next;
 
       @Override
@@ -137,6 +135,44 @@ public class LinkedList<E>
         return item;
       }
     };
+  }
+
+  public void sort(BiFunction<E, E, Integer> comparator) {
+    if (size > 1) {
+      /* Splits the list in half. */
+      LinkedList<E> that = this.pollMany(size >> 1);
+
+      /* Sorts sub-lists. */
+      this.sort(comparator);
+      that.sort(comparator);
+
+      /* Merges sub-lists based on the fact they are well-ordered. */
+      LinkedList<E> sorted = new LinkedList<>();
+
+      while (!this.isEmpty() && !that.isEmpty()) {
+        if (comparator.apply(this.first(), that.first()) <= 0) {
+          sorted.add(this.poll());
+        } else {
+          sorted.add(that.poll());
+        }
+      }
+
+      /* Adds any leftover items to the end of the resulting list. */
+      LinkedList<E> remainder = !this.isEmpty() ? this : that;
+      sorted.addAll(remainder);
+      remainder.clear();
+      this.addAll(sorted);
+    }
+  }
+
+  public void clear() {
+    this.resetToEmptyState();
+  }
+
+  public void addAll(LinkedList<E> items) {
+    for (E item : items) {
+      this.add(item);
+    }
   }
 
   private class Node {
@@ -171,7 +207,7 @@ public class LinkedList<E>
     }
 
     public void removeFromList() {
-      assert(prev != null && next != null);
+      assert (prev != null && next != null);
       prev.setNext(next);
       size--;
     }
@@ -179,7 +215,7 @@ public class LinkedList<E>
     private Node walk(int steps, Function<Node, Node> walker) {
       if (steps > 0) {
         Node node = walker.apply(this);
-        assert(node != null);
+        assert (node != null);
         return node.walk(steps - 1, walker);
       }
       return this;

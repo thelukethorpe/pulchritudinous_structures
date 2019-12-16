@@ -2,6 +2,8 @@ package pulchritudinous.structures;
 
 import org.junit.Test;
 
+import java.util.Random;
+
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
@@ -11,6 +13,7 @@ import static org.hamcrest.Matchers.is;
 public class LinkedListTest {
 
   private final LinkedList<String> linkedList = new LinkedList<>();
+  private final Random random = new Random();
 
   @Test
   public void isEmptyUponInitialization() {
@@ -178,5 +181,80 @@ public class LinkedListTest {
       assertThat(actualValue, is("" + expectedValue));
       expectedValue++;
     }
+  }
+
+  @Test
+  public void sortsItemsIntoAscendingOrder() {
+    /* Adds 1000 random items to the list. */
+    for (int i = 0; i < 1000; i++) {
+      linkedList.add("" + random.nextInt());
+    }
+
+    linkedList.sort(String::compareTo);
+
+    String prev = linkedList.poll();
+    String curr = linkedList.poll();
+
+    while (curr != null) {
+      assertTrue(prev.compareTo(curr) <= 0);
+      prev = curr;
+      curr = linkedList.poll();
+    }
+  }
+
+  @Test
+  public void sortingItemsRetainsContents() {
+    /* Adds 1000 random items to the list. */
+    String[] contents = new String[1000];
+    for (int i = 0; i < 1000; i++) {
+      String item = "" + random.nextInt();
+      linkedList.add(item);
+      contents[i] = item;
+    }
+
+    linkedList.sort(String::compareTo);
+
+    for (int i = 0; i < 1000; i++) {
+      assertTrue(linkedList.remove(contents[i]));
+    }
+
+    assertTrue(linkedList.isEmpty());
+  }
+
+  @Test
+  public void isEmptyAfterClear() {
+    linkedList.add("Something in particular");
+    linkedList.add("Something else");
+    linkedList.add("Another thing");
+
+    linkedList.clear();
+
+    assertTrue(linkedList.isEmpty());
+    assertFalse(linkedList.contains("Something in particular"));
+    assertFalse(linkedList.contains("Something else"));
+    assertFalse(linkedList.contains("Another thing"));
+  }
+
+  @Test
+  public void containsAllItemsThatHaveBeenAdded() {
+    LinkedList<String> someItems = new LinkedList<>();
+    someItems.add("Something in particular");
+    someItems.add("Something else");
+    someItems.add("Another thing");
+
+    linkedList.add("I was here before anything else");
+    linkedList.add("Me too!");
+    linkedList.addAll(someItems);
+
+    assertTrue(linkedList.contains("I was here before anything else"));
+    assertTrue(linkedList.contains("Me too!"));
+
+    assertTrue(someItems.contains("Something in particular"));
+    assertTrue(someItems.contains("Something else"));
+    assertTrue(someItems.contains("Another thing"));
+
+    assertTrue(linkedList.contains("Something in particular"));
+    assertTrue(linkedList.contains("Something else"));
+    assertTrue(linkedList.contains("Another thing"));
   }
 }
