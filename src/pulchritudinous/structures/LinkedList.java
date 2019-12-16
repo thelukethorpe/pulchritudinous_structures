@@ -49,10 +49,18 @@ public class LinkedList<E> {
   public boolean remove(E item) {
     Node node = findByItem(item);
     if (node != null) {
-      node.prev.setNext(node.next);
+      node.removeFromList();
       return true;
     }
     return false;
+  }
+
+  public void removeAll(E item) {
+    for (Node curr = head.next; curr != tail; curr = curr.next){
+      if (curr.item.equals(item)) {
+        curr.removeFromList();
+      }
+    }
   }
 
   private class Node {
@@ -73,6 +81,11 @@ public class LinkedList<E> {
     public void setNext(Node node) {
       node.prev = this;
       this.next = node;
+    }
+
+    public void removeFromList() {
+      assert(prev != null && next != null);
+      prev.setNext(next);
     }
   }
 }
