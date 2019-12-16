@@ -41,4 +41,12 @@ public class LinkedListTest {
     assertTrue(linkedList.contains("Something"));
     assertFalse(linkedList.contains("Something else"));
   }
+
+  @Test
+  public void doesNotContainItemsThatHaveBeenRemoved() {
+    linkedList.add("Something");
+    assertTrue(linkedList.remove("Something"));
+    assertFalse(linkedList.contains("Something"));
+    assertFalse(linkedList.remove("Something"));
+  }
 }

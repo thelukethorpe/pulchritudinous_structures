@@ -20,6 +20,15 @@ public class LinkedList<E> {
     node.setNext(next);
   }
 
+  private Node findByItem(E item) {
+    for (Node curr = head.next; curr != tail; curr = curr.next){
+      if (curr.item.equals(item)) {
+        return curr;
+      }
+    }
+    return null;
+  }
+
   public boolean isEmpty() {
     return size == 0;
   }
@@ -34,10 +43,14 @@ public class LinkedList<E> {
   }
 
   public boolean contains(E item) {
-    for (Node curr = head.next; curr != tail; curr = curr.next){
-      if (curr.item.equals(item)) {
-        return true;
-      }
+    return findByItem(item) != null;
+  }
+
+  public boolean remove(E item) {
+    Node node = findByItem(item);
+    if (node != null) {
+      node.prev.setNext(node.next);
+      return true;
     }
     return false;
   }
