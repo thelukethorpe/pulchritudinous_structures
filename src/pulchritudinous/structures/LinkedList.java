@@ -151,6 +151,7 @@ public class LinkedList<E> {
     public void removeFromList() {
       assert(prev != null && next != null);
       prev.setNext(next);
+      size--;
     }
 
     private Node walk(int steps, Function<Node, Node> walker) {
