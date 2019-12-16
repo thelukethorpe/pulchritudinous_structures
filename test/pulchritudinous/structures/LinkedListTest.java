@@ -165,4 +165,18 @@ public class LinkedListTest {
     assertFalse(linkedList.contains("Something else"));
     assertTrue(linkedList.contains("Another thing"));
   }
+
+  @Test
+  public void isIterable() {
+    /* Adds items 1-8 to the list. */
+    for (int i = 1; i <= 8; i++) {
+      linkedList.add("" + i);
+    }
+
+    int expectedValue = 1;
+    for (String actualValue : linkedList) {
+      assertThat(actualValue, is("" + expectedValue));
+      expectedValue++;
+    }
+  }
 }

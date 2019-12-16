@@ -1,8 +1,10 @@
 package pulchritudinous.structures;
 
+import java.util.Iterator;
 import java.util.function.Function;
 
-public class LinkedList<E> {
+public class LinkedList<E>
+  implements Iterable<E> {
 
   private final Node head, tail;
   private int size;
@@ -117,6 +119,26 @@ public class LinkedList<E> {
     return head.next.item;
   }
 
+  @Override
+  public Iterator<E> iterator() {
+    return new Iterator<E>() {
+
+      private Node curr = head.next;
+
+      @Override
+      public boolean hasNext() {
+        return curr != tail;
+      }
+
+      @Override
+      public E next() {
+        E item = curr.item;
+        curr = curr.next;
+        return item;
+      }
+    };
+  }
+
   private class Node {
     private final E item;
     private Node prev, next;
@@ -137,7 +159,7 @@ public class LinkedList<E> {
       this.next = node;
     }
 
-    private void insertItemJustBefore(E item) {
+    public void insertItemJustBefore(E item) {
       if (item == null) {
         throw new NullPointerException("Cannot insert null into LinkedList.");
       }
