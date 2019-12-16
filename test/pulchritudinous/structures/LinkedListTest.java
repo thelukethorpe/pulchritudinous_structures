@@ -34,4 +34,11 @@ public class LinkedListTest {
     linkedList.add("3");
     assertThat(linkedList.size(), is(3));
   }
+
+  @Test
+  public void onlyContainsItemsThatHaveBeenAdded() {
+    linkedList.add("Something");
+    assertTrue(linkedList.contains("Something"));
+    assertFalse(linkedList.contains("Something else"));
+  }
 }
