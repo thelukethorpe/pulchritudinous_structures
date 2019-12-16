@@ -1,5 +1,7 @@
 package pulchritudinous.structures;
 
+import java.util.function.Function;
+
 public class LinkedList<E> {
 
   private final Node head, tail;
@@ -19,6 +21,10 @@ public class LinkedList<E> {
       }
     }
     return null;
+  }
+
+  private boolean isValidIndex(int index) {
+    return 0 <= index && index < size;
   }
 
   public boolean isEmpty() {
@@ -55,6 +61,19 @@ public class LinkedList<E> {
     }
   }
 
+  public E get(int index) {
+    if (!isValidIndex(index)) {
+      return null;
+    }
+
+    int midpoint = (size >> 1);
+    if (index <= midpoint) {
+      return head.walkForwards(index + 1).item;
+    } else {
+      return tail.walkBackwards(size - index).item;
+    }
+  }
+
   private class Node {
     private final E item;
     private Node prev, next;
@@ -85,6 +104,23 @@ public class LinkedList<E> {
     public void removeFromList() {
       assert(prev != null && next != null);
       prev.setNext(next);
+    }
+
+    private Node walk(int steps, Function<Node, Node> walker) {
+      if (steps > 0) {
+        Node node = walker.apply(this);
+        assert(node != null);
+        return node.walk(steps - 1, walker);
+      }
+      return this;
+    }
+
+    public Node walkForwards(int steps) {
+      return walk(steps, node -> node.next);
+    }
+
+    public Node walkBackwards(int steps) {
+      return walk(steps, node -> node.prev);
     }
   }
 }

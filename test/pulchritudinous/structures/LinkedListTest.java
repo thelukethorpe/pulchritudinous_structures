@@ -74,6 +74,21 @@ public class LinkedListTest {
     assertFalse(linkedList.contains("Something in particular"));
     assertTrue(linkedList.contains("Something else"));
     assertTrue(linkedList.contains("Another thing"));
+  }
 
+  @Test
+  public void retainsOrderOfAddition() {
+    linkedList.add("1");
+    linkedList.add("2");
+    linkedList.add("3");
+
+    assertThat(linkedList.get(0), is("1"));
+    assertThat(linkedList.get(1), is("2"));
+    assertThat(linkedList.get(2), is("3"));
+  }
+
+  @Test
+  public void returnsNullWhenBadlyIndexed() {
+    assertThat(new LinkedList<>().get(1), is((Object) null));
   }
 }
