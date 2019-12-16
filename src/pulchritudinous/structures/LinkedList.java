@@ -95,8 +95,11 @@ public class LinkedList<E> {
     }
 
     private void insertItemJustBefore(E item) {
-      Node node = new Node(item);
+      if (item == null) {
+        throw new NullPointerException("Cannot insert null into LinkedList.");
+      }
 
+      Node node = new Node(item);
       node.setPrev(prev);
       node.setNext(this);
     }
