@@ -12,14 +12,6 @@ public class LinkedList<E> {
     this.head.setNext(this.tail);
   }
 
-  private void insertJustBefore(E item, Node next) {
-    Node prev = next.prev;
-    Node node = new Node(item);
-
-    node.setPrev(prev);
-    node.setNext(next);
-  }
-
   private Node findByItem(E item) {
     for (Node curr = head.next; curr != tail; curr = curr.next){
       if (curr.item.equals(item)) {
@@ -39,7 +31,7 @@ public class LinkedList<E> {
 
   public void add(E item) {
     size++;
-    insertJustBefore(item, tail);
+    tail.insertItemJustBefore(item);
   }
 
   public boolean contains(E item) {
@@ -81,6 +73,13 @@ public class LinkedList<E> {
     public void setNext(Node node) {
       node.prev = this;
       this.next = node;
+    }
+
+    private void insertItemJustBefore(E item) {
+      Node node = new Node(item);
+
+      node.setPrev(prev);
+      node.setNext(this);
     }
 
     public void removeFromList() {
