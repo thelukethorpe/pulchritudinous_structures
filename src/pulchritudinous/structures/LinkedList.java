@@ -23,6 +23,16 @@ public class LinkedList<E> {
     return null;
   }
 
+  private Node findByIndex(int index) {
+    assert(isValidIndex(index));
+    int midpoint = (size >> 1);
+    if (index <= midpoint) {
+      return head.walkForwards(index + 1);
+    } else {
+      return tail.walkBackwards(size - index);
+    }
+  }
+
   private boolean isValidIndex(int index) {
     return 0 <= index && index < size;
   }
@@ -36,7 +46,6 @@ public class LinkedList<E> {
   }
 
   public void add(E item) {
-    size++;
     tail.insertItemJustBefore(item);
   }
 
@@ -62,15 +71,13 @@ public class LinkedList<E> {
   }
 
   public E get(int index) {
-    if (!isValidIndex(index)) {
-      return null;
-    }
+    return isValidIndex(index) ? findByIndex(index).item : null;
+  }
 
-    int midpoint = (size >> 1);
-    if (index <= midpoint) {
-      return head.walkForwards(index + 1).item;
-    } else {
-      return tail.walkBackwards(size - index).item;
+  public void insertAt(E item, int index) {
+    if (isValidIndex(index) || index == size) {
+      Node node = findByIndex(index);
+      node.insertItemJustBefore(item);
     }
   }
 
@@ -102,6 +109,7 @@ public class LinkedList<E> {
       Node node = new Node(item);
       node.setPrev(prev);
       node.setNext(this);
+      size++;
     }
 
     public void removeFromList() {

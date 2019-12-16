@@ -102,4 +102,18 @@ public class LinkedListTest {
   public void returnsNullWhenBadlyIndexed() {
     assertThat(new LinkedList<>().get(1), is((Object) null));
   }
+
+  @Test
+  public void retainsOrderAfterInsertion() {
+    linkedList.add("1");
+    linkedList.add("3");
+
+    assertThat(linkedList.get(0), is("1"));
+    assertThat(linkedList.get(1), is("3"));
+
+    linkedList.insertAt("2", 1);
+
+    assertThat(linkedList.get(1), is("2"));
+    assertThat(linkedList.get(2), is("3"));
+  }
 }
