@@ -116,4 +116,27 @@ public class LinkedListTest {
     assertThat(linkedList.get(1), is("2"));
     assertThat(linkedList.get(2), is("3"));
   }
+
+  @Test
+  public void returnsNullWhenTooManyItemsArePolled() {
+    assertThat(new LinkedList<>().pollMany(1), is((LinkedList) null));
+  }
+
+  @Test
+  public void retainsOrderAndCorrectlyUpdatesContentsAfterPollingMany() {
+    /* Adds items 1-8 to the list. */
+    for (int i = 1; i <= 8; i++) {
+      linkedList.add("" + i);
+    }
+
+    LinkedList<String> anotherLinkedList = linkedList.pollMany(3);
+
+    for (int i = 1; i <= 3; i++) {
+      assertTrue(anotherLinkedList.contains("" + i));
+    }
+
+    for (int i = 4; i <= 8; i++) {
+      assertTrue(linkedList.contains("" + i));
+    }
+  }
 }

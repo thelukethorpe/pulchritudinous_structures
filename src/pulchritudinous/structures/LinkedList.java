@@ -37,6 +37,10 @@ public class LinkedList<E> {
     return 0 <= index && index < size;
   }
 
+  private boolean isValidInclusiveIndex(int index) {
+    return isValidIndex(index) || index == size;
+  }
+
   public boolean isEmpty() {
     return size == 0;
   }
@@ -75,10 +79,28 @@ public class LinkedList<E> {
   }
 
   public void insertAt(E item, int index) {
-    if (isValidIndex(index) || index == size) {
+    if (isValidInclusiveIndex(index)) {
       Node node = findByIndex(index);
       node.insertItemJustBefore(item);
     }
+  }
+
+  public LinkedList<E> pollMany(int n) {
+    if (!isValidInclusiveIndex(n)) {
+      return null;
+    }
+
+    LinkedList<E> pollCollection = new LinkedList<>();
+    Node node = findByIndex(n);
+
+    pollCollection.head.setNext(head.next);
+    pollCollection.tail.setPrev(node.prev);
+    pollCollection.size = n;
+
+    this.head.setNext(node);
+    this.size = size - n;
+
+    return pollCollection;
   }
 
   private class Node {
