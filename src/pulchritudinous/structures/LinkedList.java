@@ -30,13 +30,17 @@ public class LinkedList<E>
       }
 
       Iterator thisIterator = this.iterator();
-      for (Object thatItem : that) {
+      Iterator thatIterator = that.iterator();
+
+      while (thisIterator.hasNext() && thatIterator.hasNext()) {
         Object thisItem = thisIterator.next();
+        Object thatItem = thatIterator.next();
         if (!thisItem.equals(thatItem)) {
           return false;
         }
       }
 
+      assert(thisIterator.hasNext() == thatIterator.hasNext());
       return true;
     } else {
       return false;

@@ -271,14 +271,13 @@ public class LinkedListTest {
 
   @Test
   public void isEqualToListWithSameOrderAndContents() {
-    linkedList.add("Something in particular");
-    linkedList.add("Something else");
-    linkedList.add("Another thing");
-
     LinkedList<String> anotherLinkedList = new LinkedList<>();
-    anotherLinkedList.add("Something in particular");
-    anotherLinkedList.add("Something else");
-    anotherLinkedList.add("Another thing");
+    /* Adds 1000 random items to both lists. */
+    for (int i = 0; i < 1000; i++) {
+      String item = "" + random.nextInt();
+      linkedList.add(item);
+      anotherLinkedList.add(item);
+    }
 
     assertThat(linkedList, is(anotherLinkedList));
     assertThat(linkedList.hashCode(), is(anotherLinkedList.hashCode()));
