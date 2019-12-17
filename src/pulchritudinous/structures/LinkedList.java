@@ -220,6 +220,14 @@ public class LinkedList<E>
     }
   }
 
+  public LinkedList<E> clone() {
+    LinkedList<E> clone = new LinkedList<>();
+    for (E item : this) {
+      clone.add(item);
+    }
+    return clone;
+  }
+
   private class Node {
     private final E item;
     private Node prev, next;

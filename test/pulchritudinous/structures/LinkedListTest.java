@@ -295,4 +295,20 @@ public class LinkedListTest {
 
     assertTrue(Arrays.equals(contents, linkedList.toArray()));
   }
+
+  @Test
+  public void isDeepCloneable() {
+    linkedList.add("Something in particular");
+    linkedList.add("Something else");
+    linkedList.add("Another thing");
+
+    LinkedList<String> linkedListClone = linkedList.clone();
+    linkedList.clear();
+
+    assertTrue(linkedListClone.contains("Something in particular"));
+    assertTrue(linkedListClone.contains("Something else"));
+    assertTrue(linkedListClone.contains("Another thing"));
+
+
+  }
 }
