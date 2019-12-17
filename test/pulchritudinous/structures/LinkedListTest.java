@@ -308,7 +308,16 @@ public class LinkedListTest {
     assertTrue(linkedListClone.contains("Something in particular"));
     assertTrue(linkedListClone.contains("Something else"));
     assertTrue(linkedListClone.contains("Another thing"));
+  }
 
+  @Test
+  public void retainsOrderAfterAddingFirst() {
+    linkedList.addFirst("2");
+    linkedList.addFirst("1");
+    linkedList.add("3");
 
+    assertThat(linkedList.get(0), is("1"));
+    assertThat(linkedList.get(1), is("2"));
+    assertThat(linkedList.get(2), is("3"));
   }
 }

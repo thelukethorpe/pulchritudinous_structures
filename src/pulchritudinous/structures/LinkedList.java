@@ -76,7 +76,7 @@ public class LinkedList<E>
   }
 
   private Node findByIndex(int index) {
-    assert (isValidIndex(index));
+    assert (isValidInclusiveIndex(index));
     int midpoint = (size >> 1);
     if (index <= midpoint) {
       return head.walkForwards(index + 1);
@@ -103,6 +103,10 @@ public class LinkedList<E>
 
   public void add(E item) {
     tail.insertItemJustBefore(item);
+  }
+
+  public void addFirst(E item) {
+    this.insertAt(item, 0);
   }
 
   public boolean contains(E item) {
