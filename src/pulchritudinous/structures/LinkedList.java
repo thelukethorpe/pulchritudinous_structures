@@ -216,6 +216,17 @@ public class LinkedList<E>
     }
   }
 
+  public E set(E item, int index) {
+    if (!isValidIndex(index)) {
+      return null;
+    }
+
+    Node node = findByIndex(index);
+    node.insertItemJustBefore(item);
+    node.removeFromList();
+    return node.item;
+  }
+
   public int size() {
     return size;
   }
