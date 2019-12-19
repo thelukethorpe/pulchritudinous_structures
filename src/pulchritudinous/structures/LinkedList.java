@@ -145,6 +145,16 @@ public class LinkedList<E>
     return isValidIndex(index) ? findByIndex(index).item : null;
   }
 
+  public int indexOf(E item) {
+    Node curr = head.next;
+    for (int i = 0; i < size; i++, curr = curr.next) {
+      if (curr.item.equals(item)) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
   public void insertAt(E item, int index) {
     if (isValidInclusiveIndex(index)) {
       Node node = findByIndex(index);

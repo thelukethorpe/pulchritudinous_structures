@@ -320,4 +320,24 @@ public class LinkedListTest {
     assertThat(linkedList.get(1), is("2"));
     assertThat(linkedList.get(2), is("3"));
   }
+
+  @Test
+  public void looksUpIndexBasedOnFirstOccurrence() {
+    linkedList.add("1");
+    linkedList.add("2");
+    linkedList.add("3");
+    linkedList.add("Something");
+    linkedList.add("Something");
+
+    assertThat(linkedList.indexOf("1"), is(0));
+    assertThat(linkedList.indexOf("2"), is(1));
+    assertThat(linkedList.indexOf("3"), is(2));
+    assertThat(linkedList.indexOf("Something"), is(3));
+
+  }
+
+  @Test
+  public void badIndexLookUpsReturnsNegativeOne() {
+    assertThat(new LinkedList<>().indexOf("Something"), is(-1));
+  }
 }
