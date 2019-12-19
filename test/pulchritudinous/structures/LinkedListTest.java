@@ -138,7 +138,7 @@ public class LinkedListTest {
       linkedList.add("" + i);
     }
 
-    LinkedList<String> anotherLinkedList = linkedList.pollMany(3);
+    List<String> anotherLinkedList = linkedList.pollMany(3);
 
     for (int i = 1; i <= 3; i++) {
       assertTrue(anotherLinkedList.contains("" + i));
