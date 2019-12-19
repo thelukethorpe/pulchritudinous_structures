@@ -117,6 +117,10 @@ public class LinkedList<E>
     this.insertAt(item, 0);
   }
 
+  public void addLast(E item) {
+    this.add(item);
+  }
+
   public void clear() {
     this.resetToEmptyState();
   }

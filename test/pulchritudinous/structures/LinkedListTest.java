@@ -311,10 +311,10 @@ public class LinkedListTest {
   }
 
   @Test
-  public void retainsOrderAfterAddingFirst() {
+  public void retainsOrderAfterAddingFirstThenLast() {
     linkedList.addFirst("2");
     linkedList.addFirst("1");
-    linkedList.add("3");
+    linkedList.addLast("3");
 
     assertThat(linkedList.get(0), is("1"));
     assertThat(linkedList.get(1), is("2"));
