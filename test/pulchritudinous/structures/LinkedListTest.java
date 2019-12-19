@@ -12,14 +12,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-public class LinkedListTest {
+public class LinkedListTest extends AbstractListTest {
 
   private final LinkedList<String> linkedList = new LinkedList<>();
   private final Random random = new Random();
 
-  @Test
-  public void isEmptyUponInitialization() {
-    assertTrue(new LinkedList().isEmpty());
+  @Override
+  protected AbstractList newEmptyList() {
+    return new LinkedList();
   }
 
   @Test

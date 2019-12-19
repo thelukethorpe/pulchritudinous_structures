@@ -6,8 +6,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-public class LinkedList<E>
-    implements List<E> {
+public class LinkedList<E> extends AbstractList implements List<E> {
 
   private final Node head, tail;
   private int size;
