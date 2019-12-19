@@ -166,6 +166,10 @@ public class LinkedList<E>
     return size == 0;
   }
 
+  public E last() {
+    return tail.prev.item;
+  }
+
   public E poll() {
     if (this.isEmpty()) {
       return null;
