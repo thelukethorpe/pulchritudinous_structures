@@ -40,131 +40,11 @@ public class LinkedList<E>
         }
       }
 
-      assert(thisIterator.hasNext() == thatIterator.hasNext());
+      assert (thisIterator.hasNext() == thatIterator.hasNext());
       return true;
     } else {
       return false;
     }
-  }
-
-  @Override
-  public int hashCode() {
-    return Arrays.hashCode(this.toArray());
-  }
-
-  public Object[] toArray() {
-    Object[] array = new Object[size];
-    int index = 0;
-    for (Object item : this) {
-      array[index++] = item;
-    }
-    return array;
-  }
-
-  private void resetToEmptyState() {
-    head.setNext(tail);
-    size = 0;
-  }
-
-  private Node findByItem(E item) {
-    for (Node curr = head.next; curr != tail; curr = curr.next) {
-      if (curr.item.equals(item)) {
-        return curr;
-      }
-    }
-    return null;
-  }
-
-  private Node findByIndex(int index) {
-    assert (isValidInclusiveIndex(index));
-    int midpoint = (size >> 1);
-    if (index <= midpoint) {
-      return head.walkForwards(index + 1);
-    } else {
-      return tail.walkBackwards(size - index);
-    }
-  }
-
-  private boolean isValidIndex(int index) {
-    return 0 <= index && index < size;
-  }
-
-  private boolean isValidInclusiveIndex(int index) {
-    return isValidIndex(index) || index == size;
-  }
-
-  public boolean isEmpty() {
-    return size == 0;
-  }
-
-  public int size() {
-    return size;
-  }
-
-  public void add(E item) {
-    tail.insertItemJustBefore(item);
-  }
-
-  public void addFirst(E item) {
-    this.insertAt(item, 0);
-  }
-
-  public boolean contains(E item) {
-    return findByItem(item) != null;
-  }
-
-  public boolean remove(E item) {
-    Node node = findByItem(item);
-    if (node != null) {
-      node.removeFromList();
-      return true;
-    }
-    return false;
-  }
-
-  public void removeAll(E item) {
-    for (Node curr = head.next; curr != tail; curr = curr.next) {
-      if (curr.item.equals(item)) {
-        curr.removeFromList();
-      }
-    }
-  }
-
-  public E get(int index) {
-    return isValidIndex(index) ? findByIndex(index).item : null;
-  }
-
-  public void insertAt(E item, int index) {
-    if (isValidInclusiveIndex(index)) {
-      Node node = findByIndex(index);
-      node.insertItemJustBefore(item);
-    }
-  }
-
-  public LinkedList<E> pollMany(int n) {
-    if (!isValidInclusiveIndex(n)) {
-      return null;
-    }
-
-    LinkedList<E> that = new LinkedList<>();
-    for (int i = 0; i < n; i++) {
-      that.add(this.poll());
-    }
-    return that;
-  }
-
-  public E poll() {
-    if (this.isEmpty()) {
-      return null;
-    }
-
-    Node first = head.next;
-    first.removeFromList();
-    return first.item;
-  }
-
-  public E first() {
-    return head.next.item;
   }
 
   @Override
@@ -184,6 +64,135 @@ public class LinkedList<E>
         return item;
       }
     };
+  }
+
+  @Override
+  public int hashCode() {
+    return Arrays.hashCode(this.toArray());
+  }
+
+  private Node findByIndex(int index) {
+    assert (isValidInclusiveIndex(index));
+    int midpoint = (size >> 1);
+    if (index <= midpoint) {
+      return head.walkForwards(index + 1);
+    } else {
+      return tail.walkBackwards(size - index);
+    }
+  }
+
+  private Node findByItem(E item) {
+    for (Node curr = head.next; curr != tail; curr = curr.next) {
+      if (curr.item.equals(item)) {
+        return curr;
+      }
+    }
+    return null;
+  }
+
+  private boolean isValidIndex(int index) {
+    return 0 <= index && index < size;
+  }
+
+  private boolean isValidInclusiveIndex(int index) {
+    return isValidIndex(index) || index == size;
+  }
+
+  private void resetToEmptyState() {
+    head.setNext(tail);
+    size = 0;
+  }
+
+  public void add(E item) {
+    tail.insertItemJustBefore(item);
+  }
+
+  public void addAll(LinkedList<E> items) {
+    for (E item : items) {
+      this.add(item);
+    }
+  }
+
+  public void addFirst(E item) {
+    this.insertAt(item, 0);
+  }
+
+  public void clear() {
+    this.resetToEmptyState();
+  }
+
+  public LinkedList<E> clone() {
+    LinkedList<E> clone = new LinkedList<>();
+    for (E item : this) {
+      clone.add(item);
+    }
+    return clone;
+  }
+
+  public boolean contains(E item) {
+    return findByItem(item) != null;
+  }
+
+  public E first() {
+    return head.next.item;
+  }
+
+  public E get(int index) {
+    return isValidIndex(index) ? findByIndex(index).item : null;
+  }
+
+  public void insertAt(E item, int index) {
+    if (isValidInclusiveIndex(index)) {
+      Node node = findByIndex(index);
+      node.insertItemJustBefore(item);
+    }
+  }
+
+  public boolean isEmpty() {
+    return size == 0;
+  }
+
+  public E poll() {
+    if (this.isEmpty()) {
+      return null;
+    }
+
+    Node first = head.next;
+    first.removeFromList();
+    return first.item;
+  }
+
+  public LinkedList<E> pollMany(int n) {
+    if (!isValidInclusiveIndex(n)) {
+      return null;
+    }
+
+    LinkedList<E> that = new LinkedList<>();
+    for (int i = 0; i < n; i++) {
+      that.add(this.poll());
+    }
+    return that;
+  }
+
+  public boolean remove(E item) {
+    Node node = findByItem(item);
+    if (node != null) {
+      node.removeFromList();
+      return true;
+    }
+    return false;
+  }
+
+  public void removeAll(E item) {
+    for (Node curr = head.next; curr != tail; curr = curr.next) {
+      if (curr.item.equals(item)) {
+        curr.removeFromList();
+      }
+    }
+  }
+
+  public int size() {
+    return size;
   }
 
   public void sort(BiFunction<E, E, Integer> comparator) {
@@ -214,22 +223,13 @@ public class LinkedList<E>
     }
   }
 
-  public void clear() {
-    this.resetToEmptyState();
-  }
-
-  public void addAll(LinkedList<E> items) {
-    for (E item : items) {
-      this.add(item);
+  public Object[] toArray() {
+    Object[] array = new Object[size];
+    int index = 0;
+    for (Object item : this) {
+      array[index++] = item;
     }
-  }
-
-  public LinkedList<E> clone() {
-    LinkedList<E> clone = new LinkedList<>();
-    for (E item : this) {
-      clone.add(item);
-    }
-    return clone;
+    return array;
   }
 
   private class Node {
