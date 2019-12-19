@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 public class LinkedList<E>
     implements Iterable<E> {
@@ -216,14 +217,19 @@ public class LinkedList<E>
     }
   }
 
+  void replaceAll(UnaryOperator<E> operator) {
+    for (Node curr = head.next; curr != tail; curr = curr.next) {
+      curr.replaceWith(operator.apply(curr.item));
+    }
+  }
+
   public E set(E item, int index) {
     if (!isValidIndex(index)) {
       return null;
     }
 
     Node node = findByIndex(index);
-    node.insertItemJustBefore(item);
-    node.removeFromList();
+    node.replaceWith(item);
     return node.item;
   }
 
@@ -303,6 +309,11 @@ public class LinkedList<E>
       assert (prev != null && next != null);
       prev.setNext(next);
       size--;
+    }
+
+    public void replaceWith(E item) {
+      this.insertItemJustBefore(item);
+      this.removeFromList();
     }
 
     private Node walk(int steps, Function<Node, Node> walker) {
