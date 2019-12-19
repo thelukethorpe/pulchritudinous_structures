@@ -209,6 +209,13 @@ public class LinkedList<E>
     }
   }
 
+  public void removeAt(int index) {
+    if (isValidIndex(index)) {
+      Node node = findByIndex(index);
+      node.removeFromList();
+    }
+  }
+
   public int size() {
     return size;
   }

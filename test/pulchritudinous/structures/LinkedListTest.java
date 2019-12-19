@@ -340,4 +340,20 @@ public class LinkedListTest {
   public void badIndexLookUpsReturnsNegativeOne() {
     assertThat(new LinkedList<>().indexOf("Something"), is(-1));
   }
+
+  @Test
+  public void doesNotContainItemsThatHaveBeenRemovedAtTheGivenIndex() {
+    linkedList.add("1");
+    linkedList.add("Something");
+    linkedList.add("2");
+    linkedList.add("Something");
+    linkedList.add("3");
+
+    linkedList.removeAt(3);
+    linkedList.removeAt(1);
+
+    assertThat(linkedList.get(0), is("1"));
+    assertThat(linkedList.get(1), is("2"));
+    assertThat(linkedList.get(2), is("3"));
+  }
 }
