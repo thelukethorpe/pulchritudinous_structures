@@ -6,12 +6,12 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-public class LinkedList<E> extends AbstractList implements List<E> {
+public class LinkedList<E> extends AbstractList<E> implements List<E> {
 
   private final Node head, tail;
-  private int size;
 
   public LinkedList() {
+    super();
     this.head = new Node(null);
     this.tail = new Node(null);
     this.resetToEmptyState();
@@ -24,7 +24,7 @@ public class LinkedList<E> extends AbstractList implements List<E> {
     } else if (obj instanceof LinkedList) {
 
       LinkedList that = (LinkedList) obj;
-      if (this.size != that.size) {
+      if (this.size() != that.size()) {
         return false;
       }
 
@@ -72,11 +72,11 @@ public class LinkedList<E> extends AbstractList implements List<E> {
 
   private Node findByIndex(int index) {
     assert (isValidInclusiveIndex(index));
-    int midpoint = (size >> 1);
+    int midpoint = (size() >> 1);
     if (index <= midpoint) {
       return head.walkForwards(index + 1);
     } else {
-      return tail.walkBackwards(size - index);
+      return tail.walkBackwards(size() - index);
     }
   }
 
@@ -89,17 +89,14 @@ public class LinkedList<E> extends AbstractList implements List<E> {
     return null;
   }
 
-  private boolean isValidIndex(int index) {
-    return 0 <= index && index < size;
-  }
-
   private boolean isValidInclusiveIndex(int index) {
-    return isValidIndex(index) || index == size;
+    return isValidIndex(index) || index == size();
   }
 
-  private void resetToEmptyState() {
+  @Override
+  protected void resetToEmptyState() {
+    super.resetToEmptyState();
     head.setNext(tail);
-    size = 0;
   }
 
   @Override
@@ -156,7 +153,7 @@ public class LinkedList<E> extends AbstractList implements List<E> {
   @Override
   public int indexOf(E item) {
     Node curr = head.next;
-    for (int i = 0; i < size; i++, curr = curr.next) {
+    for (int i = 0; i < size(); i++, curr = curr.next) {
       if (curr.item.equals(item)) {
         return i;
       }
@@ -170,11 +167,6 @@ public class LinkedList<E> extends AbstractList implements List<E> {
       Node node = findByIndex(index);
       node.insertItemJustBefore(item);
     }
-  }
-
-  @Override
-  public boolean isEmpty() {
-    return size == 0;
   }
 
   @Override
@@ -252,15 +244,10 @@ public class LinkedList<E> extends AbstractList implements List<E> {
   }
 
   @Override
-  public int size() {
-    return size;
-  }
-
-  @Override
   public void sort(BiFunction<E, E, Integer> comparator) {
-    if (size > 1) {
+    if (size() > 1) {
       /* Splits the list in half. */
-      List<E> that = this.pollMany(size >> 1);
+      List<E> that = this.pollMany(size() >> 1);
 
       /* Sorts sub-lists. */
       this.sort(comparator);
@@ -287,7 +274,7 @@ public class LinkedList<E> extends AbstractList implements List<E> {
 
   @Override
   public Object[] toArray() {
-    Object[] array = new Object[size];
+    Object[] array = new Object[size()];
     int index = 0;
     for (Object item : this) {
       array[index++] = item;
@@ -323,13 +310,13 @@ public class LinkedList<E> extends AbstractList implements List<E> {
       Node node = new Node(item);
       node.setPrev(prev);
       node.setNext(this);
-      size++;
+      incrementSize();
     }
 
     public void removeFromList() {
       assert (prev != null && next != null);
       prev.setNext(next);
-      size--;
+      decrementSize();
     }
 
     public void replaceWith(E item) {

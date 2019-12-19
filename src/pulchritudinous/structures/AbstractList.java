@@ -1,12 +1,36 @@
 package pulchritudinous.structures;
 
-public class AbstractList<E> {
+public abstract class AbstractList<E> {
+
+  private int size;
+
+  protected AbstractList() {
+    this.resetToEmptyState();
+  }
+
+  protected void incrementSize() {
+    size++;
+  }
+
+  protected void decrementSize() {
+    size--;
+  }
+
+  protected boolean isValidIndex(int index) {
+    return 0 <= index && index < size;
+  }
+
+  protected void resetToEmptyState() {
+    size = 0;
+  }
+
+  public abstract void add(E item);
 
   public boolean isEmpty() {
-    return true;
+    return size == 0;
   }
 
   public int size() {
-    return 0;
+    return size;
   }
 }

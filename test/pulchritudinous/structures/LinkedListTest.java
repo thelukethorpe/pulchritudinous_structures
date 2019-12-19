@@ -23,12 +23,6 @@ public class LinkedListTest extends AbstractListTest {
   }
 
   @Test
-  public void isNotEmptyAfterItemHasBeenAdded() {
-    linkedList.add("Something");
-    assertFalse(linkedList.isEmpty());
-  }
-
-  @Test
   public void hasSizeEqualToNumberOfItems() {
     linkedList.add("1");
     linkedList.add("2");
