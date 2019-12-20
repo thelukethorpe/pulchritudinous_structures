@@ -72,6 +72,17 @@ public class ArrayList<E> extends AbstractList<E> {
   }
 
   @Override
+  public void insertAt(E item, int index) {
+    if (isValidInclusiveIndex(index)) {
+      for (int i = size(); i > index; i--) {
+        contents[i] = contents[i - 1];
+      }
+      contents[index] = item;
+      incrementSize();
+    }
+  }
+
+  @Override
   public boolean remove(E item) {
     int index = findIndexByItem(item);
     if (!isValidIndex(index)) {

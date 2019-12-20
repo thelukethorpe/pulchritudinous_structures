@@ -101,10 +101,6 @@ public class LinkedList<E> extends AbstractList<E> implements List<E> {
     };
   }
 
-  private boolean isValidInclusiveIndex(int index) {
-    return isValidIndex(index) || index == size();
-  }
-
   @Override
   protected void resetToEmptyState() {
     super.resetToEmptyState();

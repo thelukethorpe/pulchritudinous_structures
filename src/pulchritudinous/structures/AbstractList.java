@@ -23,6 +23,10 @@ public abstract class AbstractList<E> {
     return 0 <= index && index < size;
   }
 
+  protected boolean isValidInclusiveIndex(int index) {
+    return isValidIndex(index) || index == size();
+  }
+
   protected void resetToEmptyState() {
     size = 0;
   }
@@ -36,6 +40,8 @@ public abstract class AbstractList<E> {
   public E get(int index) {
     return isValidIndex(index) ? findByIndex(index) : null;
   }
+
+  public abstract void insertAt(E item, int index);
 
   public boolean isEmpty() {
     return size == 0;

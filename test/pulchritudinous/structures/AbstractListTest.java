@@ -111,4 +111,18 @@ public abstract class AbstractListTest {
   public void returnsNullWhenBadlyIndexed() {
     assertThat(newEmptyList().get(1), is((Object) null));
   }
+
+  @Test
+  public void retainsOrderAfterInsertion() {
+    abstractList.add("1");
+    abstractList.add("3");
+
+    assertThat(abstractList.get(0), is("1"));
+    assertThat(abstractList.get(1), is("3"));
+
+    abstractList.insertAt("2", 1);
+
+    assertThat(abstractList.get(1), is("2"));
+    assertThat(abstractList.get(2), is("3"));
+  }
 }
