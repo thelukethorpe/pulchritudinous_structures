@@ -109,12 +109,7 @@ public class ArrayList<E> extends AbstractList<E> {
     if (!isValidIndex(index)) {
       return false;
     }
-
-    decrementSize();
-    for (int i = index; i < size(); i++) {
-      Object next = getAtIndex(i + 1);
-      setAtIndex(next, i);
-    }
+    removeAt(index);
     return true;
   }
 
@@ -133,6 +128,17 @@ public class ArrayList<E> extends AbstractList<E> {
 
     for (int i = size(); i < size; i++) {
       setAtIndex(null, i);
+    }
+  }
+
+  @Override
+  public void removeAt(int index) {
+    if (isValidIndex(index)) {
+      decrementSize();
+      for (int i = index; i < size(); i++) {
+        Object next = getAtIndex(i + 1);
+        setAtIndex(next, i);
+      }
     }
   }
 }

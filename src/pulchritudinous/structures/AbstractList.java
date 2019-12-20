@@ -68,6 +68,8 @@ public abstract class AbstractList<E> {
 
   public abstract void removeAll(E item);
 
+  public abstract void removeAt(int index);
+
   public int size() {
     return size;
   }

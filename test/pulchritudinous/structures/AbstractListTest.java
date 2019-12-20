@@ -158,4 +158,20 @@ public abstract class AbstractListTest {
     assertFalse(abstractList.contains("Something else"));
     assertTrue(abstractList.contains("Another thing"));
   }
+
+  @Test
+  public void doesNotContainItemsThatHaveBeenRemovedAtTheGivenIndex() {
+    abstractList.add("1");
+    abstractList.add("Something");
+    abstractList.add("2");
+    abstractList.add("Something");
+    abstractList.add("3");
+
+    abstractList.removeAt(3);
+    abstractList.removeAt(1);
+
+    assertThat(abstractList.get(0), is("1"));
+    assertThat(abstractList.get(1), is("2"));
+    assertThat(abstractList.get(2), is("3"));
+  }
 }
