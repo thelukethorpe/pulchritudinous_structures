@@ -108,11 +108,6 @@ public class LinkedList<E> extends AbstractList<E> implements List<E> {
   }
 
   @Override
-  public void add(E item) {
-    tail.insertItemJustBefore(item);
-  }
-
-  @Override
   public void addAll(List<E> items) {
     for (E item : items) {
       this.add(item);

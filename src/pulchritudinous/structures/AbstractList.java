@@ -5,7 +5,7 @@ public abstract class AbstractList<E> {
   private int size;
 
   protected AbstractList() {
-    this.resetToEmptyState();
+    size = 0;
   }
 
   protected void incrementSize() {
@@ -31,7 +31,9 @@ public abstract class AbstractList<E> {
     size = 0;
   }
 
-  public abstract void add(E item);
+  public void add(E item) {
+    this.insertAt(item, size());
+  }
 
   public boolean contains(E item) {
     return findByItem(item) != null;

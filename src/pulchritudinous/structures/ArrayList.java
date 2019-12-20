@@ -58,22 +58,16 @@ public class ArrayList<E> extends AbstractList<E> {
   }
 
   @Override
-  public void add(E item) {
+  public void insertAt(E item, int index) {
     if (item == null) {
       throw new NullPointerException("Cannot insert null into ArrayList.");
     }
 
-    int nextIndex = lastIndex() + 1;
-    if (nextIndex == length) {
-      this.expand();
-    }
-    contents[nextIndex] = item;
-    incrementSize();
-  }
-
-  @Override
-  public void insertAt(E item, int index) {
     if (isValidInclusiveIndex(index)) {
+      if (size() == length) {
+        this.expand();
+      }
+
       for (int i = size(); i > index; i--) {
         contents[i] = contents[i - 1];
       }
