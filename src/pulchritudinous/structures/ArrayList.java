@@ -1,5 +1,7 @@
 package pulchritudinous.structures;
 
+import java.util.function.UnaryOperator;
+
 public class ArrayList<E> extends AbstractList<E> {
 
   private static final int INITIAL_LENGTH = 128;
@@ -150,6 +152,14 @@ public class ArrayList<E> extends AbstractList<E> {
         shiftDownAndReplace(index, size(), null);
       }
 
+    }
+  }
+
+  @Override
+  public void replaceAll(UnaryOperator<E> operator) {
+    for (int i = 0; i < size(); i++) {
+      E item = findByIndex(i);
+      setAtIndex(operator.apply(item), i);
     }
   }
 }

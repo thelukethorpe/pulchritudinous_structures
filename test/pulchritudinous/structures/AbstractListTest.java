@@ -174,4 +174,17 @@ public abstract class AbstractListTest {
     assertThat(abstractList.get(1), is("2"));
     assertThat(abstractList.get(2), is("3"));
   }
+
+  @Test
+  public void allContentsAreCorrectlyMutatedAfterReplacement() {
+    abstractList.add("1");
+    abstractList.add("2");
+    abstractList.add("3");
+
+    abstractList.replaceAll(s -> "Item Number " + s);
+
+    assertThat(abstractList.get(0), is("Item Number 1"));
+    assertThat(abstractList.get(1), is("Item Number 2"));
+    assertThat(abstractList.get(2), is("Item Number 3"));
+  }
 }

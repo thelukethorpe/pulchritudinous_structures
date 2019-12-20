@@ -217,17 +217,4 @@ public class LinkedListTest extends AbstractListTest {
     assertThat(linkedList.get(1), is("2"));
     assertThat(linkedList.get(2), is("3"));
   }
-
-  @Test
-  public void allContentsAreCorrectlyMutatedAfterReplacement() {
-    linkedList.add("1");
-    linkedList.add("2");
-    linkedList.add("3");
-
-    linkedList.replaceAll(s -> "Item Number " + s);
-
-    assertThat(linkedList.get(0), is("Item Number 1"));
-    assertThat(linkedList.get(1), is("Item Number 2"));
-    assertThat(linkedList.get(2), is("Item Number 3"));
-  }
 }

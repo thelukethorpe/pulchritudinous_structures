@@ -1,5 +1,7 @@
 package pulchritudinous.structures;
 
+import java.util.function.UnaryOperator;
+
 public abstract class AbstractList<E> {
 
   private int size;
@@ -73,6 +75,8 @@ public abstract class AbstractList<E> {
   public abstract void removeAll(E item);
 
   public abstract void removeAt(int index);
+
+  public abstract void replaceAll(UnaryOperator<E> operator);
 
   public int size() {
     return size;
