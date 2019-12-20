@@ -13,6 +13,27 @@ public class ArrayList<E> extends AbstractList<E> {
     this.resetToEmptyState();
   }
 
+  @Override
+  protected E findByIndex(int index) {
+    assert(isValidIndex(index));
+    return (E) contents[index];
+  }
+
+  @Override
+  protected E findByItem(E item) {
+    int index = findIndexByItem(item);
+    return index != NULL_INDEX ? (E) contents[index] : null;
+  }
+
+  private int findIndexByItem(E item) {
+    for (int i = 0; i < size(); i++) {
+      if (contents[i].equals(item)) {
+        return i;
+      }
+    }
+    return NULL_INDEX;
+  }
+
   private void expand() {
     int length = this.length << 1;
     Object[] contents = new Object[length];
@@ -23,15 +44,6 @@ public class ArrayList<E> extends AbstractList<E> {
 
     this.length = length;
     this.contents = contents;
-  }
-
-  private int findByItem(E item) {
-    for (int i = 0; i < size(); i++) {
-      if (contents[i].equals(item)) {
-        return i;
-      }
-    }
-    return NULL_INDEX;
   }
 
   private int lastIndex() {
@@ -60,13 +72,8 @@ public class ArrayList<E> extends AbstractList<E> {
   }
 
   @Override
-  public boolean contains(E item) {
-    return findByItem(item) != NULL_INDEX;
-  }
-
-  @Override
   public boolean remove(E item) {
-    int index = findByItem(item);
+    int index = findIndexByItem(item);
     if (!isValidIndex(index)) {
       return false;
     }

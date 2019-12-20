@@ -47,6 +47,37 @@ public class LinkedList<E> extends AbstractList<E> implements List<E> {
   }
 
   @Override
+  protected E findByIndex(int index) {
+    Node node = findNodeByIndex(index);
+    return node != null ? node.item : null;
+  }
+
+  @Override
+  protected E findByItem(E item) {
+    Node node = findNodeByItem(item);
+    return node != null ? node.item : null;
+  }
+
+  private Node findNodeByIndex(int index) {
+    assert (isValidInclusiveIndex(index));
+    int midpoint = (size() >> 1);
+    if (index <= midpoint) {
+      return head.walkForwards(index + 1);
+    } else {
+      return tail.walkBackwards(size() - index);
+    }
+  }
+
+  private Node findNodeByItem(E item) {
+    for (Node curr = head.next; curr != tail; curr = curr.next) {
+      if (curr.item.equals(item)) {
+        return curr;
+      }
+    }
+    return null;
+  }
+
+  @Override
   public int hashCode() {
     return Arrays.hashCode(this.toArray());
   }
@@ -68,25 +99,6 @@ public class LinkedList<E> extends AbstractList<E> implements List<E> {
         return item;
       }
     };
-  }
-
-  private Node findByIndex(int index) {
-    assert (isValidInclusiveIndex(index));
-    int midpoint = (size() >> 1);
-    if (index <= midpoint) {
-      return head.walkForwards(index + 1);
-    } else {
-      return tail.walkBackwards(size() - index);
-    }
-  }
-
-  private Node findByItem(E item) {
-    for (Node curr = head.next; curr != tail; curr = curr.next) {
-      if (curr.item.equals(item)) {
-        return curr;
-      }
-    }
-    return null;
   }
 
   private boolean isValidInclusiveIndex(int index) {
@@ -137,17 +149,12 @@ public class LinkedList<E> extends AbstractList<E> implements List<E> {
 
   @Override
   public boolean contains(E item) {
-    return findByItem(item) != null;
+    return findNodeByItem(item) != null;
   }
 
   @Override
   public E first() {
     return head.next.item;
-  }
-
-  @Override
-  public E get(int index) {
-    return isValidIndex(index) ? findByIndex(index).item : null;
   }
 
   @Override
@@ -164,7 +171,7 @@ public class LinkedList<E> extends AbstractList<E> implements List<E> {
   @Override
   public void insertAt(E item, int index) {
     if (isValidInclusiveIndex(index)) {
-      Node node = findByIndex(index);
+      Node node = findNodeByIndex(index);
       node.insertItemJustBefore(item);
     }
   }
@@ -200,7 +207,7 @@ public class LinkedList<E> extends AbstractList<E> implements List<E> {
 
   @Override
   public boolean remove(E item) {
-    Node node = findByItem(item);
+    Node node = findNodeByItem(item);
     if (node != null) {
       node.removeFromList();
       return true;
@@ -220,7 +227,7 @@ public class LinkedList<E> extends AbstractList<E> implements List<E> {
   @Override
   public void removeAt(int index) {
     if (isValidIndex(index)) {
-      Node node = findByIndex(index);
+      Node node = findNodeByIndex(index);
       node.removeFromList();
     }
   }
@@ -238,7 +245,7 @@ public class LinkedList<E> extends AbstractList<E> implements List<E> {
       return null;
     }
 
-    Node node = findByIndex(index);
+    Node node = findNodeByIndex(index);
     node.replaceWith(item);
     return node.item;
   }

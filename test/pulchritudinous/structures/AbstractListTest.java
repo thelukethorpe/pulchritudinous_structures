@@ -95,4 +95,20 @@ public abstract class AbstractListTest {
     assertTrue(abstractList.contains("Something else"));
     assertTrue(abstractList.contains("Another thing"));
   }
+
+  @Test
+  public void retainsOrderOfAddition() {
+    abstractList.add("1");
+    abstractList.add("2");
+    abstractList.add("3");
+
+    assertThat(abstractList.get(0), is("1"));
+    assertThat(abstractList.get(1), is("2"));
+    assertThat(abstractList.get(2), is("3"));
+  }
+
+  @Test
+  public void returnsNullWhenBadlyIndexed() {
+    assertThat(newEmptyList().get(1), is((Object) null));
+  }
 }

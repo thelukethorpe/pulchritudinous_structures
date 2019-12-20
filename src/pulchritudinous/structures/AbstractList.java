@@ -16,6 +16,9 @@ public abstract class AbstractList<E> {
     size--;
   }
 
+  protected abstract E findByIndex(int index);
+  protected abstract E findByItem(E item);
+
   protected boolean isValidIndex(int index) {
     return 0 <= index && index < size;
   }
@@ -26,7 +29,13 @@ public abstract class AbstractList<E> {
 
   public abstract void add(E item);
 
-  public abstract boolean contains(E item);
+  public boolean contains(E item) {
+    return findByItem(item) != null;
+  }
+
+  public E get(int index) {
+    return isValidIndex(index) ? findByIndex(index) : null;
+  }
 
   public boolean isEmpty() {
     return size == 0;
