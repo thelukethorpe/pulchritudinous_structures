@@ -77,4 +77,21 @@ public class ArrayList<E> extends AbstractList<E> {
     }
     return true;
   }
+
+  @Override
+  public void removeAll(E item) {
+    int size = size();
+
+    for (int i = 0, j = 0; i < size; i++) {
+      if (!contents[i].equals(item)) {
+        contents[j++] = contents[i];
+      } else {
+        decrementSize();
+      }
+    }
+
+    for (int i = size(); i < size; i++) {
+      contents[i] = null;
+    }
+  }
 }

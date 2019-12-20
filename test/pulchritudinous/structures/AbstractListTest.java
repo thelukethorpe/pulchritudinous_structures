@@ -81,4 +81,18 @@ public abstract class AbstractListTest {
     assertTrue(abstractList.remove("Something in particular"));
     assertFalse(abstractList.contains("Something in particular"));
   }
+
+  @Test
+  public void doesNotContainDuplicatesAfterAllHaveBeenRemoved() {
+    abstractList.add("Something in particular");
+    abstractList.add("Something else");
+    abstractList.add("Something in particular");
+    abstractList.add("Another thing");
+    abstractList.add("Something in particular");
+
+    abstractList.removeAll("Something in particular");
+    assertFalse(abstractList.contains("Something in particular"));
+    assertTrue(abstractList.contains("Something else"));
+    assertTrue(abstractList.contains("Another thing"));
+  }
 }

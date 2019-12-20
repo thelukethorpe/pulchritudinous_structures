@@ -22,20 +22,6 @@ public class LinkedListTest extends AbstractListTest {
   }
 
   @Test
-  public void doesNotContainDuplicatesAfterAllHaveBeenRemoved() {
-    linkedList.add("Something in particular");
-    linkedList.add("Something else");
-    linkedList.add("Something in particular");
-    linkedList.add("Another thing");
-    linkedList.add("Something in particular");
-
-    linkedList.removeAll("Something in particular");
-    assertFalse(linkedList.contains("Something in particular"));
-    assertTrue(linkedList.contains("Something else"));
-    assertTrue(linkedList.contains("Another thing"));
-  }
-
-  @Test
   public void retainsOrderOfAddition() {
     linkedList.add("1");
     linkedList.add("2");

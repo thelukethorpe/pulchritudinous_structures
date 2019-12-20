@@ -32,7 +32,9 @@ public abstract class AbstractList<E> {
     return size == 0;
   }
 
-  public abstract boolean remove(E s);
+  public abstract boolean remove(E item);
+
+  public abstract void removeAll(E item);
 
   public int size() {
     return size;
