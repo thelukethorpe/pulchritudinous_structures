@@ -136,4 +136,26 @@ public abstract class AbstractListTest {
     assertThat(abstractList.get(1), is("2"));
     assertThat(abstractList.get(2), is("3"));
   }
+
+  @Test
+  public void returnsNullAfterEmptyPoll() {
+    assertThat(newEmptyList().poll(), is((Object) null));
+    assertThat(newEmptyList().poll(), is((Object) null));
+  }
+
+  @Test
+  public void doesNotContainFirstItemAfterBeingPolled() {
+    abstractList.add("Something in particular");
+    abstractList.add("Something else");
+    abstractList.add("Another thing");
+
+    assertThat(abstractList.first(), is("Something in particular"));
+    assertThat(abstractList.poll(), is("Something in particular"));
+    assertThat(abstractList.poll(), is("Something else"));
+    assertThat(abstractList.first(), is("Another thing"));
+
+    assertFalse(abstractList.contains("Something in particular"));
+    assertFalse(abstractList.contains("Something else"));
+    assertTrue(abstractList.contains("Another thing"));
+  }
 }

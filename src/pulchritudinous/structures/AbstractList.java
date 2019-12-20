@@ -48,6 +48,10 @@ public abstract class AbstractList<E> {
     return findByItem(item) != null;
   }
 
+  public E first() {
+    return this.get(0);
+  }
+
   public E get(int index) {
     return isValidIndex(index) ? findByIndex(index) : null;
   }
@@ -57,6 +61,8 @@ public abstract class AbstractList<E> {
   public boolean isEmpty() {
     return size == 0;
   }
+
+  public abstract E poll();
 
   public abstract boolean remove(E item);
 

@@ -93,6 +93,17 @@ public class ArrayList<E> extends AbstractList<E> {
   }
 
   @Override
+  public E poll() {
+    E first = first();
+    if (first != null) {
+      setAtIndex(null, 0);
+      firstIndex = offset(1);
+      decrementSize();
+    }
+    return first;
+  }
+
+  @Override
   public boolean remove(E item) {
     int index = findIndexByItem(item);
     if (!isValidIndex(index)) {

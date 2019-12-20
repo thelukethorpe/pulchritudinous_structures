@@ -45,28 +45,6 @@ public class LinkedListTest extends AbstractListTest {
   }
 
   @Test
-  public void returnsNullAfterEmptyPoll() {
-    assertThat(new LinkedList<>().poll(), is((Object) null));
-    assertThat(new LinkedList<>().poll(), is((Object) null));
-  }
-
-  @Test
-  public void doesNotContainFirstItemAfterBeingPolled() {
-    linkedList.add("Something in particular");
-    linkedList.add("Something else");
-    linkedList.add("Another thing");
-
-    assertThat(linkedList.first(), is("Something in particular"));
-    assertThat(linkedList.poll(), is("Something in particular"));
-    assertThat(linkedList.poll(), is("Something else"));
-    assertThat(linkedList.first(), is("Another thing"));
-
-    assertFalse(linkedList.contains("Something in particular"));
-    assertFalse(linkedList.contains("Something else"));
-    assertTrue(linkedList.contains("Another thing"));
-  }
-
-  @Test
   public void isIterable() {
     /* Adds items 1-8 to the list. */
     for (int i = 1; i <= 8; i++) {

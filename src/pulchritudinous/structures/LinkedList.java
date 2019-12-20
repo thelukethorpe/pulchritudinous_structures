@@ -134,11 +134,6 @@ public class LinkedList<E> extends AbstractList<E> implements List<E> {
   }
 
   @Override
-  public E first() {
-    return head.next.item;
-  }
-
-  @Override
   public int indexOf(E item) {
     Node curr = head.next;
     for (int i = 0; i < size(); i++, curr = curr.next) {
