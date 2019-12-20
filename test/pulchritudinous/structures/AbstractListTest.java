@@ -125,4 +125,15 @@ public abstract class AbstractListTest {
     assertThat(abstractList.get(1), is("2"));
     assertThat(abstractList.get(2), is("3"));
   }
+
+  @Test
+  public void retainsOrderAfterAddingFirstThenLast() {
+    abstractList.addFirst("2");
+    abstractList.addFirst("1");
+    abstractList.addLast("3");
+
+    assertThat(abstractList.get(0), is("1"));
+    assertThat(abstractList.get(1), is("2"));
+    assertThat(abstractList.get(2), is("3"));
+  }
 }

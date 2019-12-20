@@ -115,16 +115,6 @@ public class LinkedList<E> extends AbstractList<E> implements List<E> {
   }
 
   @Override
-  public void addFirst(E item) {
-    this.insertAt(item, 0);
-  }
-
-  @Override
-  public void addLast(E item) {
-    this.add(item);
-  }
-
-  @Override
   public void clear() {
     this.resetToEmptyState();
   }

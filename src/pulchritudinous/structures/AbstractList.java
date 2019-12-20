@@ -17,6 +17,7 @@ public abstract class AbstractList<E> {
   }
 
   protected abstract E findByIndex(int index);
+
   protected abstract E findByItem(E item);
 
   protected boolean isValidIndex(int index) {
@@ -32,6 +33,14 @@ public abstract class AbstractList<E> {
   }
 
   public void add(E item) {
+    this.addLast(item);
+  }
+
+  public void addFirst(E item) {
+    this.insertAt(item, 0);
+  }
+
+  public void addLast(E item) {
     this.insertAt(item, size());
   }
 

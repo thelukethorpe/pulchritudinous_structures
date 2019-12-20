@@ -206,17 +206,6 @@ public class LinkedListTest extends AbstractListTest {
   }
 
   @Test
-  public void retainsOrderAfterAddingFirstThenLast() {
-    linkedList.addFirst("2");
-    linkedList.addFirst("1");
-    linkedList.addLast("3");
-
-    assertThat(linkedList.get(0), is("1"));
-    assertThat(linkedList.get(1), is("2"));
-    assertThat(linkedList.get(2), is("3"));
-  }
-
-  @Test
   public void looksUpIndexBasedOnFirstOccurrence() {
     linkedList.add("1");
     linkedList.add("2");
