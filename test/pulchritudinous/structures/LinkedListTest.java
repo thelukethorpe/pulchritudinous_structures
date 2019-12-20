@@ -7,7 +7,6 @@ import java.util.Random;
 
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
-import static junit.framework.TestCase.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -20,43 +19,6 @@ public class LinkedListTest extends AbstractListTest {
   @Override
   protected AbstractList newEmptyList() {
     return new LinkedList();
-  }
-
-  @Test
-  public void onlyContainsItemsThatHaveBeenAdded() {
-    linkedList.add("Something");
-    assertTrue(linkedList.contains("Something"));
-    assertFalse(linkedList.contains("Something else"));
-  }
-
-  @Test
-  public void throwsNullPointerExceptionWhenNullIsAdded() {
-    try {
-      linkedList.add(null);
-      fail();
-    } catch (Exception e) {
-      assertTrue(e instanceof NullPointerException);
-    }
-  }
-
-  @Test
-  public void doesNotContainItemsThatHaveBeenRemoved() {
-    linkedList.add("Something");
-    assertTrue(linkedList.remove("Something"));
-    assertFalse(linkedList.contains("Something"));
-    assertFalse(linkedList.remove("Something"));
-  }
-
-  @Test
-  public void onlyOneItemIsRemovedAtATime() {
-    linkedList.add("Something in particular");
-    linkedList.add("Something in particular");
-
-    assertTrue(linkedList.remove("Something in particular"));
-    assertTrue(linkedList.contains("Something in particular"));
-
-    assertTrue(linkedList.remove("Something in particular"));
-    assertFalse(linkedList.contains("Something in particular"));
   }
 
   @Test

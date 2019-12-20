@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -42,5 +43,42 @@ public abstract class AbstractListTest {
     abstractList.remove("3");
     abstractList.remove("2");
     assertThat(abstractList.size(), is(1));
+  }
+
+  @Test
+  public void onlyContainsItemsThatHaveBeenAdded() {
+    abstractList.add("Something");
+    assertTrue(abstractList.contains("Something"));
+    assertFalse(abstractList.contains("Something else"));
+  }
+
+  @Test
+  public void throwsNullPointerExceptionWhenNullIsAdded() {
+    try {
+      abstractList.add(null);
+      fail();
+    } catch (Exception e) {
+      assertTrue(e instanceof NullPointerException);
+    }
+  }
+
+  @Test
+  public void doesNotContainItemsThatHaveBeenRemoved() {
+    abstractList.add("Something");
+    assertTrue(abstractList.remove("Something"));
+    assertFalse(abstractList.contains("Something"));
+    assertFalse(abstractList.remove("Something"));
+  }
+
+  @Test
+  public void onlyOneItemIsRemovedAtATime() {
+    abstractList.add("Something in particular");
+    abstractList.add("Something in particular");
+
+    assertTrue(abstractList.remove("Something in particular"));
+    assertTrue(abstractList.contains("Something in particular"));
+
+    assertTrue(abstractList.remove("Something in particular"));
+    assertFalse(abstractList.contains("Something in particular"));
   }
 }

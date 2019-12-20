@@ -3,6 +3,7 @@ package pulchritudinous.structures;
 public class ArrayList<E> extends AbstractList<E> {
 
   private static final int INITIAL_LENGTH = 128;
+  private static final int NULL_INDEX = -1;
 
   private int length;
   private Object[] contents;
@@ -30,7 +31,7 @@ public class ArrayList<E> extends AbstractList<E> {
         return i;
       }
     }
-    return -1;
+    return NULL_INDEX;
   }
 
   private int lastIndex() {
@@ -46,12 +47,21 @@ public class ArrayList<E> extends AbstractList<E> {
 
   @Override
   public void add(E item) {
+    if (item == null) {
+      throw new NullPointerException("Cannot insert null into ArrayList.");
+    }
+
     int nextIndex = lastIndex() + 1;
     if (nextIndex == length) {
       this.expand();
     }
     contents[nextIndex] = item;
     incrementSize();
+  }
+
+  @Override
+  public boolean contains(E item) {
+    return findByItem(item) != NULL_INDEX;
   }
 
   @Override

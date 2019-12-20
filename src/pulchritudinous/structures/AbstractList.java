@@ -26,6 +26,8 @@ public abstract class AbstractList<E> {
 
   public abstract void add(E item);
 
+  public abstract boolean contains(E item);
+
   public boolean isEmpty() {
     return size == 0;
   }
