@@ -68,6 +68,22 @@ public class ArrayList<E> extends AbstractList<E> {
     contents = new Object[length];
   }
 
+  private void shiftDownAndReplace(int start, int end, E item) {
+    for (int i = start; i < end; i++) {
+      Object next = getAtIndex(i + 1);
+      setAtIndex(next, i);
+    }
+    setAtIndex(item, end);
+  }
+
+  private void shiftUpAndReplace(int start, int end, E item) {
+    for (int i = end; i > start; i--) {
+      Object prev = getAtIndex(i - 1);
+      setAtIndex(prev, i);
+    }
+    setAtIndex(item, start);
+  }
+
   private void setAtIndex(Object item, int index) {
     contents[offset(index)] = item;
   }
@@ -83,24 +99,15 @@ public class ArrayList<E> extends AbstractList<E> {
         this.expand();
       }
 
-      for (int i = size(); i > index; i--) {
-        Object prev = getAtIndex(i - 1);
-        setAtIndex(prev, i);
+      int midpoint = (size() >> 1);
+      if (index <= midpoint) {
+        shiftDownAndReplace(-1, index - 1, item);
+        firstIndex = offset(-1);
+      } else {
+        shiftUpAndReplace(index, size(), item);
       }
-      setAtIndex(item, index);
       incrementSize();
     }
-  }
-
-  @Override
-  public E poll() {
-    E first = first();
-    if (first != null) {
-      setAtIndex(null, 0);
-      firstIndex = offset(1);
-      decrementSize();
-    }
-    return first;
   }
 
   @Override
@@ -134,11 +141,15 @@ public class ArrayList<E> extends AbstractList<E> {
   @Override
   public void removeAt(int index) {
     if (isValidIndex(index)) {
+      int midpoint = (size() >> 1);
       decrementSize();
-      for (int i = index; i < size(); i++) {
-        Object next = getAtIndex(i + 1);
-        setAtIndex(next, i);
+      if (index <= midpoint) {
+        shiftUpAndReplace(0, index, null);
+        firstIndex = offset(1);
+      } else {
+        shiftDownAndReplace(index, size(), null);
       }
+
     }
   }
 }
