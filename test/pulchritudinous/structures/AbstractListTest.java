@@ -187,4 +187,19 @@ public abstract class AbstractListTest {
     assertThat(abstractList.get(1), is("Item Number 2"));
     assertThat(abstractList.get(2), is("Item Number 3"));
   }
+
+  @Test
+  public void itemsAreCorrectlyReplacedWhenSettingAtTheGivenIndex() {
+    abstractList.add("Something in particular");
+    abstractList.add("Something else");
+    abstractList.add("Another thing");
+
+    assertThat(abstractList.set("1", 0), is("Something in particular"));
+    assertThat(abstractList.set("2", 1), is("Something else"));
+    assertThat(abstractList.set("3", 2), is("Another thing"));
+
+    assertThat(abstractList.get(0), is("1"));
+    assertThat(abstractList.get(1), is("2"));
+    assertThat(abstractList.get(2), is("3"));
+  }
 }

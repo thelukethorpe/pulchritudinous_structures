@@ -162,4 +162,15 @@ public class ArrayList<E> extends AbstractList<E> {
       setAtIndex(operator.apply(item), i);
     }
   }
+
+  @Override
+  public E set(E item, int index) {
+    if (!isValidIndex(index)) {
+      return null;
+    }
+
+    E prev =  findByIndex(index);
+    setAtIndex(item, index);
+    return prev;
+  }
 }

@@ -78,6 +78,8 @@ public abstract class AbstractList<E> {
 
   public abstract void replaceAll(UnaryOperator<E> operator);
 
+  public abstract E set(E item, int index);
+
   public int size() {
     return size;
   }

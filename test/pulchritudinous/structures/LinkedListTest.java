@@ -202,19 +202,4 @@ public class LinkedListTest extends AbstractListTest {
   public void badIndexLookUpsReturnsNegativeOne() {
     assertThat(new LinkedList<>().indexOf("Something"), is(-1));
   }
-
-  @Test
-  public void itemsAreCorrectlyReplacedWhenSettingAtTheGivenIndex() {
-    linkedList.add("Something in particular");
-    linkedList.add("Something else");
-    linkedList.add("Another thing");
-
-    linkedList.set("1", 0);
-    linkedList.set("2", 1);
-    linkedList.set("3", 2);
-
-    assertThat(linkedList.get(0), is("1"));
-    assertThat(linkedList.get(1), is("2"));
-    assertThat(linkedList.get(2), is("3"));
-  }
 }
