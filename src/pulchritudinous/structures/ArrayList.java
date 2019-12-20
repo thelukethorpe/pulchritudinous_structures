@@ -5,6 +5,7 @@ public class ArrayList<E> extends AbstractList<E> {
   private static final int INITIAL_LENGTH = 128;
   private static final int NULL_INDEX = -1;
 
+  private int firstIndex;
   private int length;
   private Object[] contents;
 
@@ -15,19 +16,19 @@ public class ArrayList<E> extends AbstractList<E> {
 
   @Override
   protected E findByIndex(int index) {
-    assert(isValidIndex(index));
-    return (E) contents[index];
+    assert (isValidIndex(index));
+    return (E) getAtIndex(index);
   }
 
   @Override
   protected E findByItem(E item) {
     int index = findIndexByItem(item);
-    return index != NULL_INDEX ? (E) contents[index] : null;
+    return index != NULL_INDEX ? (E) getAtIndex(index) : null;
   }
 
   private int findIndexByItem(E item) {
     for (int i = 0; i < size(); i++) {
-      if (contents[i].equals(item)) {
+      if (getAtIndex(i).equals(item)) {
         return i;
       }
     }
@@ -39,22 +40,36 @@ public class ArrayList<E> extends AbstractList<E> {
     Object[] contents = new Object[length];
 
     for (int i = 0; i < this.length; i++) {
-      contents[i] = this.contents[i];
+      contents[i] = getAtIndex(i);
     }
 
+    this.firstIndex = 0;
     this.length = length;
     this.contents = contents;
+  }
+
+  private Object getAtIndex(int index) {
+    return contents[offset(index)];
   }
 
   private int lastIndex() {
     return size() - 1;
   }
 
+  private int offset(int index) {
+    return (firstIndex + index) & (length - 1);
+  }
+
   @Override
   protected void resetToEmptyState() {
     super.resetToEmptyState();
+    firstIndex = 0;
     length = INITIAL_LENGTH;
     contents = new Object[length];
+  }
+
+  private void setAtIndex(Object item, int index) {
+    contents[offset(index)] = item;
   }
 
   @Override
@@ -69,9 +84,10 @@ public class ArrayList<E> extends AbstractList<E> {
       }
 
       for (int i = size(); i > index; i--) {
-        contents[i] = contents[i - 1];
+        Object prev = getAtIndex(i - 1);
+        setAtIndex(prev, i);
       }
-      contents[index] = item;
+      setAtIndex(item, index);
       incrementSize();
     }
   }
@@ -85,7 +101,8 @@ public class ArrayList<E> extends AbstractList<E> {
 
     decrementSize();
     for (int i = index; i < size(); i++) {
-      contents[i] = contents[i + 1];
+      Object next = getAtIndex(i + 1);
+      setAtIndex(next, i);
     }
     return true;
   }
@@ -95,15 +112,16 @@ public class ArrayList<E> extends AbstractList<E> {
     int size = size();
 
     for (int i = 0, j = 0; i < size; i++) {
-      if (!contents[i].equals(item)) {
-        contents[j++] = contents[i];
+      Object curr = getAtIndex(i);
+      if (!curr.equals(item)) {
+        setAtIndex(curr, j++);
       } else {
         decrementSize();
       }
     }
 
     for (int i = size(); i < size; i++) {
-      contents[i] = null;
+      setAtIndex(null, i);
     }
   }
 }
