@@ -158,17 +158,6 @@ public class LinkedList<E> extends AbstractList<E> implements List<E> {
   }
 
   @Override
-  public E poll() {
-    if (this.isEmpty()) {
-      return null;
-    }
-
-    Node first = head.next;
-    first.removeFromList();
-    return first.item;
-  }
-
-  @Override
   public List<E> pollMany(int n) {
     if (!isValidInclusiveIndex(n)) {
       return null;

@@ -62,7 +62,11 @@ public abstract class AbstractList<E> {
     return size == 0;
   }
 
-  public abstract E poll();
+  public E poll() {
+    E first = first();
+    removeAt(0);
+    return first;
+  }
 
   public abstract boolean remove(E item);
 
