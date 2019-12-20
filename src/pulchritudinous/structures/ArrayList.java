@@ -5,7 +5,6 @@ public class ArrayList<E> extends AbstractList<E> {
   private static final int INITIAL_LENGTH = 128;
 
   private int length;
-  private int lastIndex;
   private Object[] contents;
 
   public ArrayList() {
@@ -25,22 +24,47 @@ public class ArrayList<E> extends AbstractList<E> {
     this.contents = contents;
   }
 
+  private int findByItem(E item) {
+    for (int i = 0; i < size(); i++) {
+      if (contents[i].equals(item)) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  private int lastIndex() {
+    return size() - 1;
+  }
+
   @Override
   protected void resetToEmptyState() {
     super.resetToEmptyState();
     length = INITIAL_LENGTH;
-    lastIndex = 0;
     contents = new Object[length];
   }
 
   @Override
   public void add(E item) {
-    int nextIndex = lastIndex + 1;
-    if (!isValidIndex(nextIndex)) {
+    int nextIndex = lastIndex() + 1;
+    if (nextIndex == length) {
       this.expand();
     }
     contents[nextIndex] = item;
     incrementSize();
-    lastIndex = nextIndex;
+  }
+
+  @Override
+  public boolean remove(E item) {
+    int index = findByItem(item);
+    if (!isValidIndex(index)) {
+      return false;
+    }
+
+    decrementSize();
+    for (int i = index; i < size(); i++) {
+      contents[i] = contents[i + 1];
+    }
+    return true;
   }
 }

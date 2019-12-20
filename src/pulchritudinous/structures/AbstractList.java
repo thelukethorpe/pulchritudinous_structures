@@ -30,6 +30,8 @@ public abstract class AbstractList<E> {
     return size == 0;
   }
 
+  public abstract boolean remove(E s);
+
   public int size() {
     return size;
   }

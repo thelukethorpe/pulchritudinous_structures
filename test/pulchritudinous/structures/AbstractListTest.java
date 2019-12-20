@@ -31,4 +31,16 @@ public abstract class AbstractListTest {
     abstractList.add("Something");
     assertFalse(abstractList.isEmpty());
   }
+
+  @Test
+  public void hasSizeEqualToNumberOfItems() {
+    abstractList.add("1");
+    abstractList.add("2");
+    abstractList.add("3");
+    assertThat(abstractList.size(), is(3));
+
+    abstractList.remove("3");
+    abstractList.remove("2");
+    assertThat(abstractList.size(), is(1));
+  }
 }
