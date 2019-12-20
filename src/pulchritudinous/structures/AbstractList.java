@@ -2,7 +2,7 @@ package pulchritudinous.structures;
 
 import java.util.function.UnaryOperator;
 
-public abstract class AbstractList<E> {
+public abstract class AbstractList<E> implements Iterable<E> {
 
   private int size;
 

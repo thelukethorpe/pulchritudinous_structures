@@ -45,20 +45,6 @@ public class LinkedListTest extends AbstractListTest {
   }
 
   @Test
-  public void isIterable() {
-    /* Adds items 1-8 to the list. */
-    for (int i = 1; i <= 8; i++) {
-      linkedList.add("" + i);
-    }
-
-    int expectedValue = 1;
-    for (String actualValue : linkedList) {
-      assertThat(actualValue, is("" + expectedValue));
-      expectedValue++;
-    }
-  }
-
-  @Test
   public void sortsItemsIntoAscendingOrder() {
     /* Adds 1000 random items to the list. */
     for (int i = 0; i < 1000; i++) {

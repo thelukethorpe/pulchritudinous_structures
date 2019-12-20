@@ -1,5 +1,6 @@
 package pulchritudinous.structures;
 
+import java.util.Iterator;
 import java.util.function.UnaryOperator;
 
 public class ArrayList<E> extends AbstractList<E> {
@@ -52,6 +53,23 @@ public class ArrayList<E> extends AbstractList<E> {
 
   private Object getAtIndex(int index) {
     return contents[offset(index)];
+  }
+
+  @Override
+  public Iterator<E> iterator() {
+    return new Iterator<E>() {
+      private int index = 0;
+
+      @Override
+      public boolean hasNext() {
+        return isValidIndex(index);
+      }
+
+      @Override
+      public E next() {
+        return findByIndex(index++);
+      }
+    };
   }
 
   private int lastIndex() {

@@ -202,4 +202,18 @@ public abstract class AbstractListTest {
     assertThat(abstractList.get(1), is("2"));
     assertThat(abstractList.get(2), is("3"));
   }
+
+  @Test
+  public void isIterable() {
+    /* Adds items 1-8 to the list. */
+    for (int i = 1; i <= 8; i++) {
+      abstractList.add("" + i);
+    }
+
+    int expectedValue = 1;
+    for (String actualValue : abstractList) {
+      assertThat(actualValue, is("" + expectedValue));
+      expectedValue++;
+    }
+  }
 }
