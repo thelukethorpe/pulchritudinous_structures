@@ -83,20 +83,6 @@ public class LinkedListTest extends AbstractListTest {
   }
 
   @Test
-  public void isEmptyAfterClear() {
-    linkedList.add("Something in particular");
-    linkedList.add("Something else");
-    linkedList.add("Another thing");
-
-    linkedList.clear();
-
-    assertTrue(linkedList.isEmpty());
-    assertFalse(linkedList.contains("Something in particular"));
-    assertFalse(linkedList.contains("Something else"));
-    assertFalse(linkedList.contains("Another thing"));
-  }
-
-  @Test
   public void containsAllItemsThatHaveBeenAdded() {
     LinkedList<String> someItems = new LinkedList<>();
     someItems.add("Something in particular");

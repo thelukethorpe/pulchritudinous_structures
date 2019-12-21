@@ -48,6 +48,10 @@ public abstract class AbstractList<E> implements Iterable<E> {
     this.insertAt(item, size());
   }
 
+  public void clear() {
+    this.resetToEmptyState();
+  }
+
   public boolean contains(E item) {
     return findByItem(item) != null;
   }

@@ -115,11 +115,6 @@ public class LinkedList<E> extends AbstractList<E> implements List<E> {
   }
 
   @Override
-  public void clear() {
-    this.resetToEmptyState();
-  }
-
-  @Override
   public LinkedList<E> clone() {
     LinkedList<E> clone = new LinkedList<>();
     for (E item : this) {

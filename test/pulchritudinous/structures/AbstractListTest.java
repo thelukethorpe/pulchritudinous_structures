@@ -236,4 +236,18 @@ public abstract class AbstractListTest {
   public void badIndexLookUpsReturnsNegativeOne() {
     assertThat(newEmptyList().indexOf("Something"), is(-1));
   }
+
+  @Test
+  public void isEmptyAfterClear() {
+    abstractList.add("Something in particular");
+    abstractList.add("Something else");
+    abstractList.add("Another thing");
+
+    abstractList.clear();
+
+    assertTrue(abstractList.isEmpty());
+    assertFalse(abstractList.contains("Something in particular"));
+    assertFalse(abstractList.contains("Something else"));
+    assertFalse(abstractList.contains("Another thing"));
+  }
 }
