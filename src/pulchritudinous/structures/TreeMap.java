@@ -11,15 +11,7 @@ public class TreeMap<K extends Comparable<K>, V> {
   }
 
   private Node findNodeByKey(K key) {
-    Node prev = root;
-    Node curr = root.next(key);
-
-    while (curr != null) {
-      prev = curr;
-      curr = curr.next(key);
-    }
-
-    return prev;
+    return root.searchFor(key);
   }
 
   public boolean isEmpty() {
@@ -32,27 +24,58 @@ public class TreeMap<K extends Comparable<K>, V> {
   }
 
   public int size() {
-    return 0;
+    return size;
+  }
+
+  public boolean remove(K key) {
+    Node node = findNodeByKey(key);
+    if (node.isMappedBy(key)) {
+      node.asInternalNode().removeFromMap();
+      return true;
+    }
+    return false;
   }
 
   private abstract class Node {
     public abstract V add(K key, V value);
 
+    public abstract InternalNode asInternalNode();
+
+    public abstract boolean isMappedBy(K key);
+
     public abstract Node next(K key);
 
     public abstract V replace(K key, V value);
+
+    public Node searchFor(K key) {
+      Node prev = this;
+      Node curr = this.next(key);
+
+      while (curr != null) {
+        prev = curr;
+        curr = curr.next(key);
+      }
+
+      return prev;
+    }
   }
 
   private class InternalNode extends Node {
     private final LinkNode left, right;
-    private final K key;
+    private K key;
     private V value;
+    private LinkNode parent;
 
-    private InternalNode(K key, V value) {
+    private InternalNode(K key, V value, LinkNode parent) {
+      if (key == null) {
+        throw new NullPointerException("Cannot put null mapping into TreeMap.");
+      }
+
       this.left = new LinkNode();
       this.right = new LinkNode();
       this.key = key;
       this.value = value;
+      this.parent = parent;
     }
 
     @Override
@@ -67,6 +90,16 @@ public class TreeMap<K extends Comparable<K>, V> {
         node = this;
       }
       return node.replace(key, value);
+    }
+
+    @Override
+    public InternalNode asInternalNode() {
+      return this;
+    }
+
+    @Override
+    public boolean isMappedBy(K key) {
+      return this.key.compareTo(key) == 0;
     }
 
     @Override
@@ -87,6 +120,18 @@ public class TreeMap<K extends Comparable<K>, V> {
       this.value = value;
       return prev;
     }
+
+    public void removeFromMap() {
+      if (right.hasChild()) {
+        InternalNode node = right.searchFor(key).asInternalNode();
+        node.removeFromMap();
+        this.key = node.key;
+        this.value = node.value;
+      } else {
+        parent.setChild(left);
+        size--;
+      }
+    }
   }
 
   private class LinkNode extends Node {
@@ -103,18 +148,40 @@ public class TreeMap<K extends Comparable<K>, V> {
     }
 
     @Override
+    public InternalNode asInternalNode() {
+      return null;
+    }
+
+    public boolean hasChild() {
+      return child != null;
+    }
+
+    @Override
+    public boolean isMappedBy(K key) {
+      return false;
+    }
+
+    @Override
     public Node next(K UNUSED) {
       return this.child;
     }
 
     @Override
     public V replace(K key, V value) {
+
       if (child == null) {
-        child = new InternalNode(key, value);
+        child = new InternalNode(key, value, this);
         size++;
         return null;
       }
       return child.replace(key, value);
+    }
+
+    public void setChild(LinkNode link) {
+      this.child = link.child;
+      if (child != null) {
+        child.parent = this;
+      }
     }
   }
 }
