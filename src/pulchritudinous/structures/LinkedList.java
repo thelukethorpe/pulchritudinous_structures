@@ -134,17 +134,6 @@ public class LinkedList<E> extends AbstractList<E> implements List<E> {
   }
 
   @Override
-  public int indexOf(E item) {
-    Node curr = head.next;
-    for (int i = 0; i < size(); i++, curr = curr.next) {
-      if (curr.item.equals(item)) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  @Override
   public void insertAt(E item, int index) {
     if (isValidInclusiveIndex(index)) {
       Node node = findNodeByIndex(index);

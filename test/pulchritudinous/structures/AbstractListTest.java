@@ -216,4 +216,24 @@ public abstract class AbstractListTest {
       expectedValue++;
     }
   }
+
+  @Test
+  public void looksUpIndexBasedOnFirstOccurrence() {
+    abstractList.add("1");
+    abstractList.add("2");
+    abstractList.add("3");
+    abstractList.add("Something");
+    abstractList.add("Something");
+
+    assertThat(abstractList.indexOf("1"), is(0));
+    assertThat(abstractList.indexOf("2"), is(1));
+    assertThat(abstractList.indexOf("3"), is(2));
+    assertThat(abstractList.indexOf("Something"), is(3));
+
+  }
+
+  @Test
+  public void badIndexLookUpsReturnsNegativeOne() {
+    assertThat(newEmptyList().indexOf("Something"), is(-1));
+  }
 }

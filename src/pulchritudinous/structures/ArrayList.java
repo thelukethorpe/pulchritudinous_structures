@@ -6,7 +6,6 @@ import java.util.function.UnaryOperator;
 public class ArrayList<E> extends AbstractList<E> {
 
   private static final int INITIAL_LENGTH = 128;
-  private static final int NULL_INDEX = -1;
 
   private int firstIndex;
   private int length;

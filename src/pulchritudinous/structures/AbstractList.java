@@ -4,6 +4,8 @@ import java.util.function.UnaryOperator;
 
 public abstract class AbstractList<E> implements Iterable<E> {
 
+  protected static final int NULL_INDEX = -1;
+
   private int size;
 
   protected AbstractList() {
@@ -56,6 +58,18 @@ public abstract class AbstractList<E> implements Iterable<E> {
 
   public E get(int index) {
     return isValidIndex(index) ? findByIndex(index) : null;
+  }
+
+  public int indexOf(E item) {
+    int index = 0;
+    for (E curr : this) {
+      if (curr.equals(item)) {
+        return index;
+      } else {
+        index++;
+      }
+    }
+    return NULL_INDEX;
   }
 
   public abstract void insertAt(E item, int index);
