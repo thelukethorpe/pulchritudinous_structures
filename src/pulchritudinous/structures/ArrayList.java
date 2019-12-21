@@ -55,24 +55,8 @@ public class ArrayList<E> extends AbstractList<E> {
   }
 
   @Override
-  public Iterator<E> iterator() {
-    return new Iterator<E>() {
-      private int index = 0;
-
-      @Override
-      public boolean hasNext() {
-        return isValidIndex(index);
-      }
-
-      @Override
-      public E next() {
-        return findByIndex(index++);
-      }
-    };
-  }
-
-  private int lastIndex() {
-    return size() - 1;
+  protected ArrayList<E> newEmptyList() {
+    return new ArrayList<>();
   }
 
   private int offset(int index) {
@@ -130,6 +114,23 @@ public class ArrayList<E> extends AbstractList<E> {
   }
 
   @Override
+  public Iterator<E> iterator() {
+    return new Iterator<E>() {
+      private int index = 0;
+
+      @Override
+      public boolean hasNext() {
+        return isValidIndex(index);
+      }
+
+      @Override
+      public E next() {
+        return findByIndex(index++);
+      }
+    };
+  }
+
+  @Override
   public boolean remove(E item) {
     int index = findIndexByItem(item);
     if (!isValidIndex(index)) {
@@ -168,7 +169,6 @@ public class ArrayList<E> extends AbstractList<E> {
       } else {
         shiftDownAndReplace(index, size(), null);
       }
-
     }
   }
 
@@ -186,7 +186,7 @@ public class ArrayList<E> extends AbstractList<E> {
       return null;
     }
 
-    E prev =  findByIndex(index);
+    E prev = findByIndex(index);
     setAtIndex(item, index);
     return prev;
   }

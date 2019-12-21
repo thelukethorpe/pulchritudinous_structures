@@ -1,6 +1,6 @@
 package pulchritudinous.structures;
 
-public class ArrayListTest extends AbstractListTest {
+public class ArrayListTest extends ListTest {
 
   @Override
   protected AbstractList newEmptyList() {

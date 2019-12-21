@@ -1,12 +1,10 @@
 package pulchritudinous.structures;
 
-import java.util.Arrays;
 import java.util.Iterator;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-public class LinkedList<E> extends AbstractList<E> implements List<E> {
+public class LinkedList<E> extends AbstractList<E> {
 
   private final Node head, tail;
 
@@ -15,35 +13,6 @@ public class LinkedList<E> extends AbstractList<E> implements List<E> {
     this.head = new Node(null);
     this.tail = new Node(null);
     this.resetToEmptyState();
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    } else if (obj instanceof LinkedList) {
-
-      LinkedList that = (LinkedList) obj;
-      if (this.size() != that.size()) {
-        return false;
-      }
-
-      Iterator thisIterator = this.iterator();
-      Iterator thatIterator = that.iterator();
-
-      while (thisIterator.hasNext() && thatIterator.hasNext()) {
-        Object thisItem = thisIterator.next();
-        Object thatItem = thatIterator.next();
-        if (!thisItem.equals(thatItem)) {
-          return false;
-        }
-      }
-
-      assert (thisIterator.hasNext() == thatIterator.hasNext());
-      return true;
-    } else {
-      return false;
-    }
   }
 
   @Override
@@ -78,11 +47,6 @@ public class LinkedList<E> extends AbstractList<E> implements List<E> {
   }
 
   @Override
-  public int hashCode() {
-    return Arrays.hashCode(this.toArray());
-  }
-
-  @Override
   public Iterator<E> iterator() {
     return new Iterator<E>() {
       private Node curr = head.next;
@@ -102,30 +66,14 @@ public class LinkedList<E> extends AbstractList<E> implements List<E> {
   }
 
   @Override
+  protected LinkedList<E> newEmptyList() {
+    return new LinkedList<>();
+  }
+
+  @Override
   protected void resetToEmptyState() {
     super.resetToEmptyState();
     head.setNext(tail);
-  }
-
-  @Override
-  public void addAll(List<E> items) {
-    for (E item : items) {
-      this.add(item);
-    }
-  }
-
-  @Override
-  public LinkedList<E> clone() {
-    LinkedList<E> clone = new LinkedList<>();
-    for (E item : this) {
-      clone.add(item);
-    }
-    return clone;
-  }
-
-  @Override
-  public boolean contains(E item) {
-    return findNodeByItem(item) != null;
   }
 
   @Override
@@ -134,24 +82,6 @@ public class LinkedList<E> extends AbstractList<E> implements List<E> {
       Node node = findNodeByIndex(index);
       node.insertItemJustBefore(item);
     }
-  }
-
-  @Override
-  public E last() {
-    return tail.prev.item;
-  }
-
-  @Override
-  public List<E> pollMany(int n) {
-    if (!isValidInclusiveIndex(n)) {
-      return null;
-    }
-
-    List<E> that = new LinkedList<>();
-    for (int i = 0; i < n; i++) {
-      that.add(this.poll());
-    }
-    return that;
   }
 
   @Override
@@ -197,45 +127,6 @@ public class LinkedList<E> extends AbstractList<E> implements List<E> {
     Node node = findNodeByIndex(index);
     node.replaceWith(item);
     return node.item;
-  }
-
-  @Override
-  public void sort(BiFunction<E, E, Integer> comparator) {
-    if (size() > 1) {
-      /* Splits the list in half. */
-      List<E> that = this.pollMany(size() >> 1);
-
-      /* Sorts sub-lists. */
-      this.sort(comparator);
-      that.sort(comparator);
-
-      /* Merges sub-lists based on the fact they are well-ordered. */
-      LinkedList<E> sorted = new LinkedList<>();
-
-      while (!this.isEmpty() && !that.isEmpty()) {
-        if (comparator.apply(this.first(), that.first()) <= 0) {
-          sorted.add(this.poll());
-        } else {
-          sorted.add(that.poll());
-        }
-      }
-
-      /* Adds any leftover items to the end of the resulting list. */
-      List<E> remainder = !this.isEmpty() ? this : that;
-      sorted.addAll(remainder);
-      remainder.clear();
-      this.addAll(sorted);
-    }
-  }
-
-  @Override
-  public Object[] toArray() {
-    Object[] array = new Object[size()];
-    int index = 0;
-    for (Object item : this) {
-      array[index++] = item;
-    }
-    return array;
   }
 
   private class Node {
