@@ -41,7 +41,7 @@ public class ArrayList<E> extends AbstractList<E> {
     int length = this.length << 1;
     Object[] contents = new Object[length];
 
-    for (int i = 0; i < this.length; i++) {
+    for (int i = 0; i < this.size(); i++) {
       contents[i] = getAtIndex(i);
     }
 
