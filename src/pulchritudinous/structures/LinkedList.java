@@ -1,55 +1,49 @@
 package pulchritudinous.structures;
 
-import java.util.Arrays;
 import java.util.Iterator;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-public class LinkedList<E>
-    implements List<E> {
+public class LinkedList<E> extends AbstractList<E> {
 
   private final Node head, tail;
-  private int size;
 
   public LinkedList() {
+    super();
     this.head = new Node(null);
     this.tail = new Node(null);
     this.resetToEmptyState();
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    } else if (obj instanceof LinkedList) {
-
-      LinkedList that = (LinkedList) obj;
-      if (this.size != that.size) {
-        return false;
-      }
-
-      Iterator thisIterator = this.iterator();
-      Iterator thatIterator = that.iterator();
-
-      while (thisIterator.hasNext() && thatIterator.hasNext()) {
-        Object thisItem = thisIterator.next();
-        Object thatItem = thatIterator.next();
-        if (!thisItem.equals(thatItem)) {
-          return false;
-        }
-      }
-
-      assert (thisIterator.hasNext() == thatIterator.hasNext());
-      return true;
-    } else {
-      return false;
-    }
+  protected E findByIndex(int index) {
+    Node node = findNodeByIndex(index);
+    return node != null ? node.item : null;
   }
 
   @Override
-  public int hashCode() {
-    return Arrays.hashCode(this.toArray());
+  protected E findByItem(E item) {
+    Node node = findNodeByItem(item);
+    return node != null ? node.item : null;
+  }
+
+  private Node findNodeByIndex(int index) {
+    assert (isValidInclusiveIndex(index));
+    int midpoint = (size() >> 1);
+    if (index <= midpoint) {
+      return head.walkForwards(index + 1);
+    } else {
+      return tail.walkBackwards(size() - index);
+    }
+  }
+
+  private Node findNodeByItem(E item) {
+    for (Node curr = head.next; curr != tail; curr = curr.next) {
+      if (curr.item.equals(item)) {
+        return curr;
+      }
+    }
+    return null;
   }
 
   @Override
@@ -71,145 +65,28 @@ public class LinkedList<E>
     };
   }
 
-  private Node findByIndex(int index) {
-    assert (isValidInclusiveIndex(index));
-    int midpoint = (size >> 1);
-    if (index <= midpoint) {
-      return head.walkForwards(index + 1);
-    } else {
-      return tail.walkBackwards(size - index);
-    }
+  @Override
+  protected LinkedList<E> newEmptyList() {
+    return new LinkedList<>();
   }
 
-  private Node findByItem(E item) {
-    for (Node curr = head.next; curr != tail; curr = curr.next) {
-      if (curr.item.equals(item)) {
-        return curr;
-      }
-    }
-    return null;
-  }
-
-  private boolean isValidIndex(int index) {
-    return 0 <= index && index < size;
-  }
-
-  private boolean isValidInclusiveIndex(int index) {
-    return isValidIndex(index) || index == size;
-  }
-
-  private void resetToEmptyState() {
+  @Override
+  protected void resetToEmptyState() {
+    super.resetToEmptyState();
     head.setNext(tail);
-    size = 0;
-  }
-
-  @Override
-  public void add(E item) {
-    tail.insertItemJustBefore(item);
-  }
-
-  @Override
-  public void addAll(List<E> items) {
-    for (E item : items) {
-      this.add(item);
-    }
-  }
-
-  @Override
-  public void addFirst(E item) {
-    this.insertAt(item, 0);
-  }
-
-  @Override
-  public void addLast(E item) {
-    this.add(item);
-  }
-
-  @Override
-  public void clear() {
-    this.resetToEmptyState();
-  }
-
-  @Override
-  public LinkedList<E> clone() {
-    LinkedList<E> clone = new LinkedList<>();
-    for (E item : this) {
-      clone.add(item);
-    }
-    return clone;
-  }
-
-  @Override
-  public boolean contains(E item) {
-    return findByItem(item) != null;
-  }
-
-  @Override
-  public E first() {
-    return head.next.item;
-  }
-
-  @Override
-  public E get(int index) {
-    return isValidIndex(index) ? findByIndex(index).item : null;
-  }
-
-  @Override
-  public int indexOf(E item) {
-    Node curr = head.next;
-    for (int i = 0; i < size; i++, curr = curr.next) {
-      if (curr.item.equals(item)) {
-        return i;
-      }
-    }
-    return -1;
   }
 
   @Override
   public void insertAt(E item, int index) {
     if (isValidInclusiveIndex(index)) {
-      Node node = findByIndex(index);
+      Node node = findNodeByIndex(index);
       node.insertItemJustBefore(item);
     }
   }
 
   @Override
-  public boolean isEmpty() {
-    return size == 0;
-  }
-
-  @Override
-  public E last() {
-    return tail.prev.item;
-  }
-
-  @Override
-  public E poll() {
-    if (this.isEmpty()) {
-      return null;
-    }
-
-    Node first = head.next;
-    first.removeFromList();
-    return first.item;
-  }
-
-  @Override
-  public List<E> pollMany(int n) {
-    if (!isValidInclusiveIndex(n)) {
-      return null;
-    }
-
-    List<E> that = new LinkedList<>();
-    for (int i = 0; i < n; i++) {
-      that.add(this.poll());
-    }
-    return that;
-  }
-
-  @Override
   public boolean remove(E item) {
-    Node node = findByItem(item);
+    Node node = findNodeByItem(item);
     if (node != null) {
       node.removeFromList();
       return true;
@@ -229,7 +106,7 @@ public class LinkedList<E>
   @Override
   public void removeAt(int index) {
     if (isValidIndex(index)) {
-      Node node = findByIndex(index);
+      Node node = findNodeByIndex(index);
       node.removeFromList();
     }
   }
@@ -247,53 +124,9 @@ public class LinkedList<E>
       return null;
     }
 
-    Node node = findByIndex(index);
+    Node node = findNodeByIndex(index);
     node.replaceWith(item);
     return node.item;
-  }
-
-  @Override
-  public int size() {
-    return size;
-  }
-
-  @Override
-  public void sort(BiFunction<E, E, Integer> comparator) {
-    if (size > 1) {
-      /* Splits the list in half. */
-      List<E> that = this.pollMany(size >> 1);
-
-      /* Sorts sub-lists. */
-      this.sort(comparator);
-      that.sort(comparator);
-
-      /* Merges sub-lists based on the fact they are well-ordered. */
-      LinkedList<E> sorted = new LinkedList<>();
-
-      while (!this.isEmpty() && !that.isEmpty()) {
-        if (comparator.apply(this.first(), that.first()) <= 0) {
-          sorted.add(this.poll());
-        } else {
-          sorted.add(that.poll());
-        }
-      }
-
-      /* Adds any leftover items to the end of the resulting list. */
-      List<E> remainder = !this.isEmpty() ? this : that;
-      sorted.addAll(remainder);
-      remainder.clear();
-      this.addAll(sorted);
-    }
-  }
-
-  @Override
-  public Object[] toArray() {
-    Object[] array = new Object[size];
-    int index = 0;
-    for (Object item : this) {
-      array[index++] = item;
-    }
-    return array;
   }
 
   private class Node {
@@ -324,13 +157,13 @@ public class LinkedList<E>
       Node node = new Node(item);
       node.setPrev(prev);
       node.setNext(this);
-      size++;
+      incrementSize();
     }
 
     public void removeFromList() {
       assert (prev != null && next != null);
       prev.setNext(next);
-      size--;
+      decrementSize();
     }
 
     public void replaceWith(E item) {
