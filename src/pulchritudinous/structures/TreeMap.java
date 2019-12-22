@@ -47,7 +47,7 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
       return true;
     } else if (obj instanceof TreeMap) {
       TreeMap that = (TreeMap) obj;
-      return this.getEntries().equals(that.getEntries());
+      return this.size() == that.size() && this.getEntries().equals(that.getEntries());
     } else {
       return false;
     }
