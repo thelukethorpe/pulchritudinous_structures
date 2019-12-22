@@ -1,6 +1,7 @@
 package pulchritudinous.structures;
 
 import java.util.Iterator;
+import java.util.function.Function;
 
 public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, V>.Entry<K, V>> {
 
@@ -16,17 +17,30 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
     return root.searchFor(key);
   }
 
+  private <E> List<E> toOrderedList(Function<InternalNode, E> collector) {
+    List<E> list = new LinkedList<>();
+    root.collectInOrder(list, collector);
+    return list;
+  }
+
   public boolean containsKey(K key) {
     return findNodeByKey(key).isMappedBy(key);
   }
 
   public boolean containsValue(V value) {
-    for (Entry<K, V> entry : this) {
-      if (entry.getValue().equals(value)) {
-        return true;
-      }
-    }
-    return false;
+    return this.getValues().contains(value);
+  }
+
+  public List<Entry<K, V>> getEntries() {
+    return this.toOrderedList(InternalNode::toEntry);
+  }
+
+  public List<K> getKeys() {
+    return this.toOrderedList(InternalNode::getKey);
+  }
+
+  public List<V> getValues() {
+    return this.toOrderedList(InternalNode::getValue);
   }
 
   public boolean isEmpty() {
@@ -35,7 +49,7 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
 
   @Override
   public Iterator<Entry<K, V>> iterator() {
-    return this.toOrderedList().iterator();
+    return this.getEntries().iterator();
   }
 
   public V put(K key, V value) {
@@ -56,18 +70,12 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
     return size;
   }
 
-  private List<Entry<K, V>> toOrderedList() {
-    List<Entry<K, V>> list = new LinkedList<>();
-    root.collectInOrder(list);
-    return list;
-  }
-
   private abstract class Node {
     public abstract V add(K key, V value);
 
     public abstract InternalNode asInternalNode();
 
-    public abstract void collectInOrder(List<Entry<K,V>> list);
+    public abstract <E> void collectInOrder(List<E> list, Function<InternalNode, E> collector);
 
     public abstract boolean isMappedBy(K key);
 
@@ -126,10 +134,18 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
     }
 
     @Override
-    public void collectInOrder(List<Entry<K, V>> list) {
-      left.collectInOrder(list);
-      list.add(this.toEntry());
-      right.collectInOrder(list);
+    public <E> void collectInOrder(List<E> list, Function<InternalNode, E> collector) {
+      left.collectInOrder(list, collector);
+      list.add(collector.apply(this));
+      right.collectInOrder(list, collector);
+    }
+
+    public K getKey() {
+      return key;
+    }
+
+    public V getValue() {
+      return value;
     }
 
     @Override
@@ -192,9 +208,9 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
     }
 
     @Override
-    public void collectInOrder(List<Entry<K, V>> list) {
-      if (child != null) {
-        child.collectInOrder(list);
+    public <E> void collectInOrder(List<E> list, Function<InternalNode, E> collector) {
+      if (this.hasChild()) {
+        child.collectInOrder(list, collector);
       }
     }
 

@@ -120,6 +120,31 @@ public class TreeMapTest {
       assertTrue(curr.compareTo(prev) >= 0);
       prev = curr;
     }
+  }
 
+  @Test
+  public void iteratingOverEntriesIsSynonymousWithIteratingOverMap() {
+    for (int i = 1; i <= 8; i++) {
+      treeMap.put("" + i, i);
+    }
+
+    List<TreeMap<String, Integer>.Entry<String, Integer>> entries = treeMap.getEntries();
+    List<String> keys = treeMap.getKeys();
+    List<Integer> values = treeMap.getValues();
+
+    for (TreeMap<String, Integer>.Entry<String, Integer> actualEntry : treeMap) {
+      TreeMap<String, Integer>.Entry<String, Integer> expectedEntry = entries.poll();
+      String expectedKey = keys.poll();
+      Integer expectedValue = values.poll();
+
+      assertThat(actualEntry.getKey(), is(expectedEntry.getKey()));
+      assertThat(actualEntry.getKey(), is(expectedKey));
+      assertThat(actualEntry.getValue(), is(expectedEntry.getValue()));
+      assertThat(actualEntry.getValue(), is(expectedValue));
+    }
+
+    assertTrue(entries.isEmpty());
+    assertTrue(keys.isEmpty());
+    assertTrue(values.isEmpty());
   }
 }
