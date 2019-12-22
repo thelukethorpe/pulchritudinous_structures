@@ -159,4 +159,16 @@ public class TreeMapTest {
     assertThat(treeMap.get("Age (Years)"), is(25));
     assertThat(treeMap.get("Income ($)"), is((Integer) null));
   }
+
+  @Test
+  public void onlyReplacesMappingsThatExists() {
+    treeMap.put("Something", 1);
+    
+    assertThat(treeMap.replace("Something", 42), is(1));
+    assertTrue(treeMap.containsKey("Something"));
+    assertThat(treeMap.get("Something"), is(42));
+
+    assertThat(treeMap.replace("Something else", 0), is((Integer) null));
+    assertFalse(treeMap.containsKey("Something else"));
+  }
 }

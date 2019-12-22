@@ -74,6 +74,14 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
     return false;
   }
 
+  public V replace(K key, V value) {
+    Node node = findNodeByKey(key);
+    if (node.isMappedBy(key)) {
+      return node.replace(key, value);
+    }
+    return null;
+  }
+
   public int size() {
     return size;
   }
@@ -206,7 +214,7 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
 
     @Override
     public V add(K key, V value) {
-      assert (this.child == null);
+      assert (!this.hasChild());
       return this.replace(key, value);
     }
 
@@ -238,8 +246,7 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
 
     @Override
     public V replace(K key, V value) {
-
-      if (child == null) {
+      if (!this.hasChild()) {
         child = new InternalNode(key, value, this);
         size++;
         return null;
@@ -249,7 +256,7 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
 
     public void setChild(LinkNode link) {
       this.child = link.child;
-      if (child != null) {
+      if (this.hasChild()) {
         child.parent = this;
       }
     }
