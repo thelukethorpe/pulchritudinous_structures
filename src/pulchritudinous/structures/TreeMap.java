@@ -97,6 +97,16 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
     return node.add(key, value);
   }
 
+  public V putIfAbsent(K key, V value) {
+    Node node = findNodeByKey(key);
+    if (node.isMappedBy(key)) {
+      return node.asInternalNode().getValue();
+    } else {
+      node.add(key, value);
+      return null;
+    }
+  }
+
   public boolean remove(K key) {
     Node node = findNodeByKey(key);
     if (node.isMappedBy(key)) {

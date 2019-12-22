@@ -208,4 +208,12 @@ public class TreeMapTest {
     assertThat(treeMap.getOrDefault("Something", 0), is(42));
     assertThat(treeMap.getOrDefault("Something else", 1), is(1));
   }
+
+  @Test
+  public void putsIfAbsentOnlyWhenMappingDoesNotExist() {
+    assertThat(treeMap.putIfAbsent("Something", 42), is((Integer) null));
+    assertThat(treeMap.putIfAbsent("Something", 0), is(42));
+    assertThat(treeMap.get("Something"), is(42));
+
+  }
 }
