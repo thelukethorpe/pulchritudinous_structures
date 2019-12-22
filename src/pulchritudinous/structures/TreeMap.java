@@ -1,6 +1,8 @@
 package pulchritudinous.structures;
 
-public class TreeMap<K extends Comparable<K>, V> {
+import java.util.Iterator;
+
+public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, V>.Entry<K, V>> {
 
   private final Node root;
   private int size;
@@ -14,17 +16,31 @@ public class TreeMap<K extends Comparable<K>, V> {
     return root.searchFor(key);
   }
 
+  public boolean containsKey(K key) {
+    return findNodeByKey(key).isMappedBy(key);
+  }
+
+  public boolean containsValue(V value) {
+    for (Entry<K, V> entry : this) {
+      if (entry.getValue().equals(value)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public boolean isEmpty() {
     return size == 0;
+  }
+
+  @Override
+  public Iterator<Entry<K, V>> iterator() {
+    return this.toOrderedList().iterator();
   }
 
   public V put(K key, V value) {
     Node node = findNodeByKey(key);
     return node.add(key, value);
-  }
-
-  public int size() {
-    return size;
   }
 
   public boolean remove(K key) {
@@ -36,10 +52,22 @@ public class TreeMap<K extends Comparable<K>, V> {
     return false;
   }
 
+  public int size() {
+    return size;
+  }
+
+  private List<Entry<K, V>> toOrderedList() {
+    List<Entry<K, V>> list = new LinkedList<>();
+    root.collectInOrder(list);
+    return list;
+  }
+
   private abstract class Node {
     public abstract V add(K key, V value);
 
     public abstract InternalNode asInternalNode();
+
+    public abstract void collectInOrder(List<Entry<K,V>> list);
 
     public abstract boolean isMappedBy(K key);
 
@@ -98,6 +126,13 @@ public class TreeMap<K extends Comparable<K>, V> {
     }
 
     @Override
+    public void collectInOrder(List<Entry<K, V>> list) {
+      left.collectInOrder(list);
+      list.add(this.toEntry());
+      right.collectInOrder(list);
+    }
+
+    @Override
     public boolean isMappedBy(K key) {
       return this.key.compareTo(key) == 0;
     }
@@ -132,6 +167,10 @@ public class TreeMap<K extends Comparable<K>, V> {
         size--;
       }
     }
+
+    private Entry<K,V> toEntry() {
+      return new Entry<>(key, value);
+    }
   }
 
   private class LinkNode extends Node {
@@ -150,6 +189,13 @@ public class TreeMap<K extends Comparable<K>, V> {
     @Override
     public InternalNode asInternalNode() {
       return null;
+    }
+
+    @Override
+    public void collectInOrder(List<Entry<K, V>> list) {
+      if (child != null) {
+        child.collectInOrder(list);
+      }
     }
 
     public boolean hasChild() {
@@ -182,6 +228,24 @@ public class TreeMap<K extends Comparable<K>, V> {
       if (child != null) {
         child.parent = this;
       }
+    }
+  }
+
+  public class Entry<K, V> {
+    private final K key;
+    private final V value;
+
+    private Entry(K key, V value) {
+      this.key = key;
+      this.value = value;
+    }
+
+    public K getKey() {
+      return key;
+    }
+
+    public V getValue() {
+      return value;
     }
   }
 }
