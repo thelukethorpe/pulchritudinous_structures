@@ -163,12 +163,26 @@ public class TreeMapTest {
   @Test
   public void onlyReplacesMappingsThatExists() {
     treeMap.put("Something", 1);
-    
+
     assertThat(treeMap.replace("Something", 42), is(1));
     assertTrue(treeMap.containsKey("Something"));
     assertThat(treeMap.get("Something"), is(42));
 
     assertThat(treeMap.replace("Something else", 0), is((Integer) null));
     assertFalse(treeMap.containsKey("Something else"));
+  }
+
+  @Test
+  public void isEmptyAfterClear() {
+    treeMap.put("Something in particular", 1);
+    treeMap.put("Something else", 2);
+    treeMap.put("Another thing", 3);
+
+    treeMap.clear();
+
+    assertTrue(treeMap.isEmpty());
+    assertFalse(treeMap.containsKey("Something in particular"));
+    assertFalse(treeMap.containsKey("Something else"));
+    assertFalse(treeMap.containsKey("Another thing"));
   }
 }

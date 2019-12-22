@@ -5,22 +5,31 @@ import java.util.function.Function;
 
 public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, V>.Entry<K, V>> {
 
-  private final Node root;
+  private final LinkNode root;
   private int size;
 
   public TreeMap() {
     this.root = new LinkNode();
-    this.size = 0;
+    this.resetToEmptyState();
   }
 
   private Node findNodeByKey(K key) {
     return root.searchFor(key);
   }
 
+  private void resetToEmptyState() {
+    this.root.child = null;
+    this.size = 0;
+  }
+
   private <E> List<E> toOrderedList(Function<InternalNode, E> collector) {
     List<E> list = new LinkedList<>();
     root.collectInOrder(list, collector);
     return list;
+  }
+
+  public void clear() {
+    this.resetToEmptyState();
   }
 
   public boolean containsKey(K key) {
