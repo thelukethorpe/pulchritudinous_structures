@@ -147,4 +147,16 @@ public class TreeMapTest {
     assertTrue(keys.isEmpty());
     assertTrue(values.isEmpty());
   }
+
+  @Test
+  public void mappingsCorrectlyLinkKeysToValues() {
+    treeMap.put("Height (cm)", 175);
+    treeMap.put("Weight (Kg)", 75);
+    treeMap.put("Age (Years)", 25);
+
+    assertThat(treeMap.get("Height (cm)"), is(175));
+    assertThat(treeMap.get("Weight (Kg)"), is(75));
+    assertThat(treeMap.get("Age (Years)"), is(25));
+    assertThat(treeMap.get("Income ($)"), is((Integer) null));
+  }
 }

@@ -31,6 +31,14 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
     return this.getValues().contains(value);
   }
 
+  public V get(K key) {
+    Node node = findNodeByKey(key);
+    if (node.isMappedBy(key)) {
+      return node.asInternalNode().getValue();
+    }
+    return null;
+  }
+
   public List<Entry<K, V>> getEntries() {
     return this.toOrderedList(InternalNode::toEntry);
   }
