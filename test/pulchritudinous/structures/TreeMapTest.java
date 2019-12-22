@@ -200,4 +200,12 @@ public class TreeMapTest {
     assertThat(treeMap, is(anotherTreeMap));
     assertThat(treeMap.hashCode(), is(anotherTreeMap.hashCode()));
   }
+
+  @Test
+  public void returnsDefaultValueOnlyWhenMappingDoesNotExist() {
+    treeMap.put("Something", 42);
+
+    assertThat(treeMap.getOrDefault("Something", 0), is(42));
+    assertThat(treeMap.getOrDefault("Something else", 1), is(1));
+  }
 }

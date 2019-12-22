@@ -69,6 +69,11 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
     return this.toOrderedList(InternalNode::getKey);
   }
 
+  public V getOrDefault(K key, V defaultValue) {
+    V value = this.get(key);
+    return value != null ? value : defaultValue;
+  }
+
   public List<V> getValues() {
     return this.toOrderedList(InternalNode::getValue);
   }
