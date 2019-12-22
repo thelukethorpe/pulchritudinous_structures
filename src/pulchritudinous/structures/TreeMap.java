@@ -1,6 +1,7 @@
 package pulchritudinous.structures;
 
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.function.Function;
 
 public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, V>.Entry<K, V>> {
@@ -40,6 +41,18 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
     return this.getValues().contains(value);
   }
 
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    } else if (obj instanceof TreeMap) {
+      TreeMap that = (TreeMap) obj;
+      return this.getEntries().equals(that.getEntries());
+    } else {
+      return false;
+    }
+  }
+
   public V get(K key) {
     Node node = findNodeByKey(key);
     if (node.isMappedBy(key)) {
@@ -58,6 +71,11 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
 
   public List<V> getValues() {
     return this.toOrderedList(InternalNode::getValue);
+  }
+
+  @Override
+  public int hashCode() {
+    return this.getEntries().hashCode();
   }
 
   public boolean isEmpty() {
@@ -286,6 +304,23 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
 
     public V getValue() {
       return value;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj) {
+        return true;
+      } else if (obj instanceof Entry) {
+        Entry that = (Entry) obj;
+        return this.key.equals(that.key) && this.value.equals(that.value);
+      } else {
+        return false;
+      }
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(key, value);
     }
   }
 }

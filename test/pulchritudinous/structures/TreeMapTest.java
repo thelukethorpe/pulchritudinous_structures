@@ -137,9 +137,8 @@ public class TreeMapTest {
       String expectedKey = keys.poll();
       Integer expectedValue = values.poll();
 
-      assertThat(actualEntry.getKey(), is(expectedEntry.getKey()));
+      assertThat(actualEntry, is(expectedEntry));
       assertThat(actualEntry.getKey(), is(expectedKey));
-      assertThat(actualEntry.getValue(), is(expectedEntry.getValue()));
       assertThat(actualEntry.getValue(), is(expectedValue));
     }
 
@@ -184,5 +183,21 @@ public class TreeMapTest {
     assertFalse(treeMap.containsKey("Something in particular"));
     assertFalse(treeMap.containsKey("Something else"));
     assertFalse(treeMap.containsKey("Another thing"));
+  }
+
+  @Test
+  public void isEqualToMapWithTheExactSameMappings() {
+    /* Adds 1000 random entries to the map. */
+    for (int i = 0; i < 1000; i++) {
+      treeMap.put("" + random.nextInt(), 1);
+    }
+
+    TreeMap<String, Integer> anotherTreeMap = new TreeMap<>();
+    for (TreeMap<String, Integer>.Entry<String, Integer> entry : treeMap) {
+      anotherTreeMap.put(entry.getKey(), entry.getValue());
+    }
+
+    assertThat(treeMap, is(anotherTreeMap));
+    assertThat(treeMap.hashCode(), is(anotherTreeMap.hashCode()));
   }
 }
