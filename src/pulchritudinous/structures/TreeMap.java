@@ -40,6 +40,13 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
     this.resetToEmptyState();
   }
 
+  @Override
+  public TreeMap<K, V> clone() {
+    TreeMap<K, V> clone = new TreeMap<>();
+    clone.root.collectContentsFrom(this.root);
+    return clone;
+  }
+
   public V compute(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunc) {
     return computeIf(key, remappingFunc, node -> true);
   }
@@ -51,7 +58,6 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
   public V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunc) {
     return computeIf(key, remappingFunc, node -> node.isMappedBy(key));
   }
-
 
   public boolean containsKey(K key) {
     return findNodeByKey(key).isMappedBy(key);
@@ -112,7 +118,7 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
     return this.getEntries().iterator();
   }
 
-  public V merge(K key, V value, BiFunction<? super V,? super V,? extends V> remappingFunc) {
+  public V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunc) {
     Node node = findNodeByKey(key);
     if (node.isMappedBy(key)) {
       return node.remap(key, (k, v) -> remappingFunc.apply(v, value));
@@ -124,6 +130,10 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
   public V put(K key, V value) {
     Node node = findNodeByKey(key);
     return node.add(key, value);
+  }
+
+  public void putAll(TreeMap<? extends K, ? extends V> treeMap) {
+
   }
 
   public V putIfAbsent(K key, V value) {
@@ -347,6 +357,17 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
       this.child = link.child;
       if (this.hasChild()) {
         child.parent = this;
+      }
+    }
+
+    public void collectContentsFrom(LinkNode node) {
+      assert (!this.hasChild());
+      if (node.hasChild()) {
+        K key = node.child.key;
+        V value = node.child.value;
+        this.add(key, value);
+        this.child.left.collectContentsFrom(node.child.left);
+        this.child.right.collectContentsFrom(node.child.right);
       }
     }
   }

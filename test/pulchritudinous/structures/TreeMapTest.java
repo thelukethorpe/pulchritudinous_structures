@@ -291,4 +291,19 @@ public class TreeMapTest {
     assertThat(treeMap.computeIfAbsent("Something else", giveMeaning), is(42));
     assertThat(treeMap.get("Something else"), is(42));
   }
+
+  @Test
+  public void isDeepCloneable() {
+    treeMap.put("Something in particular", 1);
+    treeMap.put("Something else", 2);
+    treeMap.put("Another thing", 3);
+
+    TreeMap<String, Integer> treeMapClone = treeMap.clone();
+    assertThat(treeMap, is(treeMapClone));
+    treeMap.clear();
+
+    assertThat(treeMapClone.get("Something in particular"), is(1));
+    assertThat(treeMapClone.get("Something else"), is(2));
+    assertThat(treeMapClone.get("Another thing"), is(3));
+  }
 }
