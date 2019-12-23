@@ -2,6 +2,7 @@ package pulchritudinous.structures;
 
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -43,7 +44,9 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
   @Override
   public TreeMap<K, V> clone() {
     TreeMap<K, V> clone = new TreeMap<>();
-    clone.root.collectContentsFrom(this.root);
+    BiConsumer<LinkNode, LinkNode> cloner = (thisNode, thatNode)
+        -> thisNode.add(thatNode.child.key, thatNode.child.value);
+    clone.root.collect(this.root, cloner);
     return clone;
   }
 
@@ -163,6 +166,16 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
       return node.replace(key, value);
     }
     return null;
+  }
+
+  public void replaceAll(BiFunction<? super K, ? super V, ? extends V> remappingFunc) {
+    BiConsumer<LinkNode, LinkNode> replacer = (thisNode, thatNode) -> {
+      K key = thisNode.child.key;
+      V value = remappingFunc.apply(thatNode.child.key, thatNode.child.value);
+      thisNode.replace(key, value);
+    };
+
+    this.root.collect(this.root, replacer);
   }
 
   public int size() {
@@ -324,12 +337,11 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
       return null;
     }
 
-    public void collectContentsFrom(LinkNode node) {
-      assert (!this.hasChild());
+    public void collect(LinkNode node, BiConsumer<LinkNode, LinkNode> consumer) {
       if (node.hasChild()) {
-        this.add(node.child.key, node.child.value);
-        this.child.left.collectContentsFrom(node.child.left);
-        this.child.right.collectContentsFrom(node.child.right);
+        consumer.accept(this, node);
+        this.child.left.collect(node.child.left, consumer);
+        this.child.right.collect(node.child.right, consumer);
       }
     }
 

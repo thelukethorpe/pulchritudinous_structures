@@ -235,7 +235,7 @@ public class TreeMapTest {
         "Five times!",
         "Five times!"
     };
-    
+
     for (String word : someWords) {
       treeMap.compute(word, (w, f) -> f != null ? f + 1 : 1);
       anotherTreeMap.merge(word, 1, (f, n) -> f + n);
@@ -328,5 +328,25 @@ public class TreeMapTest {
     assertThat(treeMap.get("Something in particular"), is(1));
     assertThat(treeMap.get("Something else"), is(2));
     assertThat(treeMap.get("Another thing"), is(3));
+  }
+
+  @Test
+  public void replacesAllValuesButDoesNotChangeKeys() {
+    BiFunction<String, Integer, Integer> addKeyToValue = (s, x) -> {
+      int y = Integer.parseInt(s);
+      return x + y;
+    };
+
+    int n = 8;
+    for (int i = 0; i <= n; i++) {
+      treeMap.put("" + i, n - i);
+    }
+
+    treeMap.replaceAll(addKeyToValue);
+    assertThat(treeMap.size(), is(n + 1));
+
+    for (Integer value : treeMap.getValues()) {
+      assertThat(value, is(n));
+    }
   }
 }
