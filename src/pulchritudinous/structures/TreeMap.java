@@ -2,6 +2,7 @@ package pulchritudinous.structures;
 
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, V>.Entry<K, V>> {
@@ -31,6 +32,33 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
 
   public void clear() {
     this.resetToEmptyState();
+  }
+
+  /*
+   * Attempts to compute a mapping for the specified key and its current mapped value
+   * (or null if there is no current mapping).
+   * If the function returns null, the mapping is removed (or remains absent if initially absent).
+   * If the function itself throws an (unchecked) exception, the exception is rethrown,
+   * and the current mapping is left unchanged.
+   */
+  public V compute(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+    Node node = findNodeByKey(key);
+    V value;
+
+    if (node.isMappedBy(key)) {
+      Entry<K, V> entry = node.asInternalNode().toEntry();
+      value = remappingFunction.apply(entry.getKey(), entry.getValue());
+      if (value == null) {
+        node.asInternalNode().removeFromMap();
+      }
+    } else {
+      value = remappingFunction.apply(key, null);
+    }
+
+    if (value != null) {
+      node.add(key, value);
+    }
+    return value;
   }
 
   public boolean containsKey(K key) {
@@ -242,7 +270,7 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
       }
     }
 
-    private Entry<K,V> toEntry() {
+    private Entry<K, V> toEntry() {
       return new Entry<>(key, value);
     }
   }

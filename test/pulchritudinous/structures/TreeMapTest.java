@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import org.junit.Test;
 
 import java.util.Random;
+import java.util.function.BiFunction;
 
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.assertFalse;
@@ -215,5 +216,64 @@ public class TreeMapTest {
     assertThat(treeMap.putIfAbsent("Something", 0), is(42));
     assertThat(treeMap.get("Something"), is(42));
 
+  }
+
+  @Test
+  public void addsComputedValueWhenKeyIsUnmapped() {
+    BiFunction<String, Integer, Integer> incrementFrequency
+        = (word, frequency) -> frequency != null ? frequency + 1 : 1;
+
+    String[] someWords = new String[]{
+        "Only once",
+        "Twice",
+        "Thrice",
+        "Five times!",
+        "Twice",
+        "Thrice",
+        "Five times!",
+        "Thrice",
+        "Five times!",
+        "Five times!",
+        "Five times!"
+    };
+    
+    for (String word : someWords) {
+      treeMap.compute(word, incrementFrequency);
+    }
+
+    assertThat(treeMap.size(), is(4));
+    assertThat(treeMap.get("Only once"), is(1));
+    assertThat(treeMap.get("Twice"), is(2));
+    assertThat(treeMap.get("Thrice"), is(3));
+    assertThat(treeMap.get("Five times!"), is(5));
+  }
+
+  @Test
+  public void removesNullComputations() {
+    treeMap.put("Something", 0);
+    treeMap.put("Remove me!", 1);
+    treeMap.put("Something else", 2);
+    treeMap.put("I also want to be REMOVED", 3);
+
+    BiFunction<String, Integer, Integer> removeIfMarked
+        = (k, v) -> k.toLowerCase().contains("remove") ? null : v;
+
+    for (String key : treeMap.getKeys()) {
+      treeMap.compute(key, removeIfMarked);
+    }
+
+    assertFalse(treeMap.containsKey("Remove me!"));
+    assertFalse(treeMap.containsKey("I also want to be REMOVED"));
+    assertThat(treeMap.get("Something"), is(0));
+    assertThat(treeMap.get("Something else"), is(2));
+  }
+
+  @Test
+  public void returnsResultOfComputation() {
+    for (int i = 1; i <= 8; i++) {
+      Integer j = i;
+      assertThat(treeMap.compute("" + i, (k, v) -> j), is(j));
+      assertTrue(treeMap.containsKey("" + i));
+    }
   }
 }
