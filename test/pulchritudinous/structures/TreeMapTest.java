@@ -220,7 +220,7 @@ public class TreeMapTest {
   }
 
   @Test
-  public void addsComputedValueWhenKeyIsUnmappedAndMergesWhenMapped() {
+  public void putsComputedValueWhenKeyIsUnmappedAndMergesWhenMapped() {
     TreeMap<String, Integer> anotherTreeMap = new TreeMap<>();
     String[] someWords = new String[]{
         "Only once",
@@ -305,5 +305,28 @@ public class TreeMapTest {
     assertThat(treeMapClone.get("Something in particular"), is(1));
     assertThat(treeMapClone.get("Something else"), is(2));
     assertThat(treeMapClone.get("Another thing"), is(3));
+  }
+
+  @Test
+  public void containsAllItemsThatHaveBeenAdded() {
+    TreeMap<String, Integer> someMappings = new TreeMap<>();
+    someMappings.put("Something in particular", 1);
+    someMappings.put("Something else", 2);
+    someMappings.put("Another thing", 3);
+
+    treeMap.put("I was here before anything else", 4);
+    treeMap.put("Me too!", 5);
+    treeMap.putAll(someMappings);
+
+    assertThat(treeMap.get("I was here before anything else"), is(4));
+    assertThat(treeMap.get("Me too!"), is(5));
+
+    assertThat(someMappings.get("Something in particular"), is(1));
+    assertThat(someMappings.get("Something else"), is(2));
+    assertThat(someMappings.get("Another thing"), is(3));
+
+    assertThat(treeMap.get("Something in particular"), is(1));
+    assertThat(treeMap.get("Something else"), is(2));
+    assertThat(treeMap.get("Another thing"), is(3));
   }
 }

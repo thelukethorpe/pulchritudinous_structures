@@ -133,7 +133,9 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
   }
 
   public void putAll(TreeMap<? extends K, ? extends V> treeMap) {
-
+    for (TreeMap<? extends K, ? extends V>.Entry<? extends K, ? extends V> entry : treeMap) {
+      this.put(entry.getKey(), entry.getValue());
+    }
   }
 
   public V putIfAbsent(K key, V value) {
@@ -322,6 +324,15 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
       return null;
     }
 
+    public void collectContentsFrom(LinkNode node) {
+      assert (!this.hasChild());
+      if (node.hasChild()) {
+        this.add(node.child.key, node.child.value);
+        this.child.left.collectContentsFrom(node.child.left);
+        this.child.right.collectContentsFrom(node.child.right);
+      }
+    }
+
     @Override
     public <E> void collectInOrder(List<E> list, Function<InternalNode, E> collector) {
       if (this.hasChild()) {
@@ -357,17 +368,6 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
       this.child = link.child;
       if (this.hasChild()) {
         child.parent = this;
-      }
-    }
-
-    public void collectContentsFrom(LinkNode node) {
-      assert (!this.hasChild());
-      if (node.hasChild()) {
-        K key = node.child.key;
-        V value = node.child.value;
-        this.add(key, value);
-        this.child.left.collectContentsFrom(node.child.left);
-        this.child.right.collectContentsFrom(node.child.right);
       }
     }
   }
