@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.util.Random;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.assertFalse;
@@ -219,10 +220,8 @@ public class TreeMapTest {
   }
 
   @Test
-  public void addsComputedValueWhenKeyIsUnmapped() {
-    BiFunction<String, Integer, Integer> incrementFrequency
-        = (word, frequency) -> frequency != null ? frequency + 1 : 1;
-
+  public void addsComputedValueWhenKeyIsUnmappedAndMergesWhenMapped() {
+    TreeMap<String, Integer> anotherTreeMap = new TreeMap<>();
     String[] someWords = new String[]{
         "Only once",
         "Twice",
@@ -238,7 +237,8 @@ public class TreeMapTest {
     };
     
     for (String word : someWords) {
-      treeMap.compute(word, incrementFrequency);
+      treeMap.compute(word, (w, f) -> f != null ? f + 1 : 1);
+      anotherTreeMap.merge(word, 1, (f, n) -> f + n);
     }
 
     assertThat(treeMap.size(), is(4));
@@ -246,6 +246,7 @@ public class TreeMapTest {
     assertThat(treeMap.get("Twice"), is(2));
     assertThat(treeMap.get("Thrice"), is(3));
     assertThat(treeMap.get("Five times!"), is(5));
+    assertThat(treeMap, is(anotherTreeMap));
   }
 
   @Test
@@ -275,5 +276,19 @@ public class TreeMapTest {
       assertThat(treeMap.compute("" + i, (k, v) -> j), is(j));
       assertTrue(treeMap.containsKey("" + i));
     }
+  }
+
+  @Test
+  public void onlyComputesUnderCorrectConditions() {
+    treeMap.put("Something", 0);
+    Function<String, Integer> giveMeaning = (k) -> 42;
+    BiFunction<String, Integer, Integer> giveMoreMeaning = (k, v) -> 42;
+
+    assertThat(treeMap.computeIfPresent("Something", giveMoreMeaning), is(42));
+    assertThat(treeMap.computeIfAbsent("Something", giveMeaning), is((Integer) null));
+
+    assertThat(treeMap.computeIfPresent("Something else", giveMoreMeaning), is((Integer) null));
+    assertThat(treeMap.computeIfAbsent("Something else", giveMeaning), is(42));
+    assertThat(treeMap.get("Something else"), is(42));
   }
 }

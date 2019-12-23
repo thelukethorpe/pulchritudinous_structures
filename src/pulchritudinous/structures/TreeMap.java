@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, V>.Entry<K, V>> {
 
@@ -13,6 +14,11 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
   public TreeMap() {
     this.root = new LinkNode();
     this.resetToEmptyState();
+  }
+
+  private V computeIf(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunc, Predicate<Node> condition) {
+    Node node = findNodeByKey(key);
+    return condition.test(node) ? node.remap(key, remappingFunc) : null;
   }
 
   private Node findNodeByKey(K key) {
@@ -34,32 +40,18 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
     this.resetToEmptyState();
   }
 
-  /*
-   * Attempts to compute a mapping for the specified key and its current mapped value
-   * (or null if there is no current mapping).
-   * If the function returns null, the mapping is removed (or remains absent if initially absent).
-   * If the function itself throws an (unchecked) exception, the exception is rethrown,
-   * and the current mapping is left unchanged.
-   */
-  public V compute(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
-    Node node = findNodeByKey(key);
-    V value;
-
-    if (node.isMappedBy(key)) {
-      Entry<K, V> entry = node.asInternalNode().toEntry();
-      value = remappingFunction.apply(entry.getKey(), entry.getValue());
-      if (value == null) {
-        node.asInternalNode().removeFromMap();
-      }
-    } else {
-      value = remappingFunction.apply(key, null);
-    }
-
-    if (value != null) {
-      node.add(key, value);
-    }
-    return value;
+  public V compute(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunc) {
+    return computeIf(key, remappingFunc, node -> true);
   }
+
+  public V computeIfAbsent(K key, Function<? super K, ? extends V> remappingFunc) {
+    return computeIf(key, (k, v) -> remappingFunc.apply(k), node -> !node.isMappedBy(key));
+  }
+
+  public V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunc) {
+    return computeIf(key, remappingFunc, node -> node.isMappedBy(key));
+  }
+
 
   public boolean containsKey(K key) {
     return findNodeByKey(key).isMappedBy(key);
@@ -120,6 +112,15 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
     return this.getEntries().iterator();
   }
 
+  public V merge(K key, V value, BiFunction<? super V,? super V,? extends V> remappingFunc) {
+    Node node = findNodeByKey(key);
+    if (node.isMappedBy(key)) {
+      return node.remap(key, (k, v) -> remappingFunc.apply(v, value));
+    } else {
+      return node.add(key, value);
+    }
+  }
+
   public V put(K key, V value) {
     Node node = findNodeByKey(key);
     return node.add(key, value);
@@ -166,6 +167,24 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
     public abstract boolean isMappedBy(K key);
 
     public abstract Node next(K key);
+
+    public V remap(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunc) {
+      V value;
+      if (this.isMappedBy(key)) {
+        Entry<K, V> entry = this.asInternalNode().toEntry();
+        value = remappingFunc.apply(entry.getKey(), entry.getValue());
+        if (value == null) {
+          this.asInternalNode().removeFromMap();
+        }
+      } else {
+        value = remappingFunc.apply(key, null);
+      }
+
+      if (value != null) {
+        this.add(key, value);
+      }
+      return value;
+    }
 
     public abstract V replace(K key, V value);
 
