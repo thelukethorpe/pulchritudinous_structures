@@ -46,7 +46,7 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
     TreeMap<K, V> clone = new TreeMap<>();
     BiConsumer<LinkNode, LinkNode> cloner = (thisNode, thatNode)
         -> thisNode.add(thatNode.child.key, thatNode.child.value);
-    clone.root.collect(this.root, cloner);
+    clone.root.applyToAll(this.root, cloner);
     return clone;
   }
 
@@ -175,7 +175,7 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
       thisNode.replace(key, value);
     };
 
-    this.root.collect(this.root, replacer);
+    this.root.applyToAll(this.root, replacer);
   }
 
   public int size() {
@@ -337,11 +337,11 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
       return null;
     }
 
-    public void collect(LinkNode node, BiConsumer<LinkNode, LinkNode> consumer) {
+    public void applyToAll(LinkNode node, BiConsumer<LinkNode, LinkNode> consumer) {
       if (node.hasChild()) {
         consumer.accept(this, node);
-        this.child.left.collect(node.child.left, consumer);
-        this.child.right.collect(node.child.right, consumer);
+        this.child.left.applyToAll(node.child.left, consumer);
+        this.child.right.applyToAll(node.child.right, consumer);
       }
     }
 
