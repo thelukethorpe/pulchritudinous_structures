@@ -13,7 +13,7 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
   private int size;
 
   public TreeMap() {
-    this.root = new LinkNode();
+    this.root = new LinkNode(null);
     this.resetToEmptyState();
   }
 
@@ -24,6 +24,10 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
 
   private Node findNodeByKey(K key) {
     return root.searchFor(key);
+  }
+
+  private boolean isCorrectlyStructured() {
+    return root.getRedBlackIndex() != RedBlackBalancer.RED_BLACK_ERROR;
   }
 
   private void resetToEmptyState() {
@@ -189,6 +193,8 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
 
     public abstract <E> void collectInOrder(List<E> list, Function<InternalNode, E> collector);
 
+    public abstract int getRedBlackIndex();
+
     public abstract boolean isMappedBy(K key);
 
     public abstract Node next(K key);
@@ -228,6 +234,7 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
 
   private class InternalNode extends Node {
     private final LinkNode left, right;
+    public final RedBlackBalancer balancer;
     private K key;
     private V value;
     private LinkNode parent;
@@ -237,8 +244,9 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
         throw new NullPointerException("Cannot put null mapping into TreeMap.");
       }
 
-      this.left = new LinkNode();
-      this.right = new LinkNode();
+      this.left = new LinkNode(this);
+      this.right = new LinkNode(this);
+      this.balancer = new RedBlackBalancer(this);
       this.key = key;
       this.value = value;
       this.parent = parent;
@@ -272,6 +280,25 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
 
     public K getKey() {
       return key;
+    }
+
+    @Override
+    public int getRedBlackIndex() {
+      int left = this.left.getRedBlackIndex();
+      int right = this.right.getRedBlackIndex();
+      int index;
+
+      if (this.left.hasChild() && this.left.child.key.compareTo(this.key) >= 0
+          || this.right.hasChild() && this.right.child.key.compareTo(this.key) <= 0
+          || left != right) {
+        index = RedBlackBalancer.RED_BLACK_ERROR;
+      } else if (this.balancer.isRed()) {
+        index = left;
+      } else {
+        index = left + 1;
+      }
+
+      return index;
     }
 
     public V getValue() {
@@ -309,7 +336,7 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
         this.key = node.key;
         this.value = node.value;
       } else {
-        parent.setChild(left);
+        parent.linkWith(left);
         size--;
       }
     }
@@ -320,9 +347,11 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
   }
 
   private class LinkNode extends Node {
+    private final InternalNode owner;
     private InternalNode child;
 
-    private LinkNode() {
+    private LinkNode(InternalNode owner) {
+      this.owner = owner;
       this.child = null;
     }
 
@@ -357,6 +386,17 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
     }
 
     @Override
+    public int getRedBlackIndex() {
+      if (!this.hasChild()) {
+        return 0;
+      } else if (this.owner != null && this.owner.balancer.isRed() && this.child.balancer.isRed()) {
+        return RedBlackBalancer.RED_BLACK_ERROR;
+      } else {
+        return this.child.getRedBlackIndex();
+      }
+    }
+
+    @Override
     public boolean isMappedBy(K key) {
       return false;
     }
@@ -371,16 +411,175 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
       if (!this.hasChild()) {
         child = new InternalNode(key, value, this);
         size++;
+        child.balancer.balance();
+        assert (isCorrectlyStructured());
         return null;
       }
       return child.replace(key, value);
     }
 
-    public void setChild(LinkNode link) {
-      this.child = link.child;
+    public void setChild(InternalNode child) {
+      this.child = child;
       if (this.hasChild()) {
         child.parent = this;
       }
+    }
+
+    public void linkWith(LinkNode link) {
+      this.setChild(link.child);
+      link.child = null;
+    }
+  }
+
+  private class RedBlackBalancer {
+    public static final int RED_BLACK_ERROR = -1;
+    private final InternalNode node;
+    private boolean isRed;
+
+    private RedBlackBalancer(InternalNode node) {
+      this.node = node;
+      this.isRed = true;
+    }
+
+    public void balance() {
+      if (!this.hasParent()) {
+        this.blackify();
+      } else if (this.getParent().isBlack()) {
+        /* Do nothing... */
+      } else if (this.hasUncle() && this.getUncle().isRed()) {
+        this.getParent().blackify();
+        this.getUncle().blackify();
+        this.getGrandparent().redify();
+        this.getGrandparent().balance();
+      } else if (this.getParent().isLeftChild() && this.isRightChild()) {
+        RedBlackBalancer parent = this.getParent();
+        parent.rotateLeft();
+        parent.rebalance();
+      } else if (this.getParent().isRightChild() && this.isLeftChild()) {
+        RedBlackBalancer parent = this.getParent();
+        parent.rotateRight();
+        parent.rebalance();
+      } else {
+        this.rebalance();
+      }
+    }
+
+    private void blackify() {
+      this.isRed = false;
+    }
+
+    private boolean hasLeftChild() {
+      return this.node.left.hasChild();
+    }
+
+    private boolean hasParent() {
+      return this.node.parent.owner != null;
+    }
+
+    private boolean hasRightChild() {
+      return this.node.right.hasChild();
+    }
+
+    private boolean hasUncle() {
+      InternalNode grandparent = this.getGrandparent().node;
+      return grandparent.left.hasChild() && grandparent.right.hasChild();
+    }
+
+    private boolean isBlack() {
+      return !this.isRed;
+    }
+
+    private boolean isLeftChild() {
+      return this.getParent().hasLeftChild() && this.getParent().getLeftChild() == this;
+    }
+
+    private boolean isRed() {
+      return this.isRed;
+    }
+
+    private boolean isRightChild() {
+      return this.getParent().hasRightChild() && this.getParent().getRightChild() == this;
+    }
+
+    private RedBlackBalancer getLeftChild() {
+      assert (this.hasLeftChild());
+      return this.node.left.child.balancer;
+    }
+
+    private RedBlackBalancer getGrandparent() {
+      return this.getParent().getParent();
+    }
+
+    private RedBlackBalancer getParent() {
+      assert (this.hasParent());
+      return this.node.parent.owner.balancer;
+    }
+
+    private RedBlackBalancer getRightChild() {
+      assert (this.hasRightChild());
+      return this.node.right.child.balancer;
+    }
+
+    private RedBlackBalancer getUncle() {
+      if (this.getParent().isLeftChild()) {
+        return this.getGrandparent().getRightChild();
+      } else if (this.getParent().isRightChild()) {
+        return this.getGrandparent().getLeftChild();
+      }
+      return null;
+    }
+
+    private void rebalance() {
+      boolean isLeft = this.isLeftChild();
+      boolean isRight = this.isRightChild();
+      if (isLeft || isRight) {
+        this.getParent().blackify();
+        RedBlackBalancer grandparent = this.getGrandparent();
+        grandparent.redify();
+        if (isLeft) {
+          grandparent.rotateRight();
+        } else {
+          grandparent.rotateLeft();
+        }
+      }
+    }
+
+    private void redify() {
+      this.isRed = true;
+    }
+
+    private void reparent(RedBlackBalancer balancer) {
+      balancer.node.parent.linkWith(this.node.parent);
+    }
+
+    private void rotateLeft() {
+      RedBlackBalancer right = this.getRightChild();
+      right.reparent(this);
+      this.setRightChild(right.node.left);
+      right.setLeftChild(this.node);
+    }
+
+    private void rotateRight() {
+      RedBlackBalancer left = this.getLeftChild();
+      left.reparent(this);
+      this.setLeftChild(left.node.right);
+      left.setRightChild(this.node);
+    }
+
+    private void setLeftChild(InternalNode node) {
+      this.node.left.setChild(node);
+    }
+
+    private void setLeftChild(LinkNode link) {
+      this.node.left.linkWith(link);
+    }
+
+    private void setRightChild(InternalNode node) {
+      this.node.right.setChild(node);
+    }
+
+    private void setRightChild(LinkNode link) {
+      this.node.right.linkWith(link);
     }
   }
 
