@@ -95,7 +95,7 @@ public class TreeMapTest {
     }
 
     int expectedValue = 1;
-    for (TreeMap<String, Integer>.Entry<String, Integer> actualEntry : treeMap) {
+    for (TreeMap.Entry<String, Integer> actualEntry : treeMap) {
       String actualKey = actualEntry.getKey();
       String expectedKey = ("" + expectedValue);
       assertThat(actualKey, is(expectedKey));
@@ -117,7 +117,7 @@ public class TreeMapTest {
     String prev = "";
     String curr = "";
 
-    for (TreeMap<String, Integer>.Entry<String, Integer> entry : treeMap) {
+    for (TreeMap.Entry<String, Integer> entry : treeMap) {
       curr = entry.getKey();
       assertTrue(curr.compareTo(prev) >= 0);
       prev = curr;
@@ -130,12 +130,12 @@ public class TreeMapTest {
       treeMap.put("" + i, i);
     }
 
-    List<TreeMap<String, Integer>.Entry<String, Integer>> entries = treeMap.getEntries();
+    List<TreeMap.Entry<String, Integer>> entries = treeMap.getEntries();
     List<String> keys = treeMap.getKeys();
     List<Integer> values = treeMap.getValues();
 
-    for (TreeMap<String, Integer>.Entry<String, Integer> actualEntry : treeMap) {
-      TreeMap<String, Integer>.Entry<String, Integer> expectedEntry = entries.poll();
+    for (TreeMap.Entry<String, Integer> actualEntry : treeMap) {
+      TreeMap.Entry<String, Integer> expectedEntry = entries.poll();
       String expectedKey = keys.poll();
       Integer expectedValue = values.poll();
 
@@ -195,7 +195,7 @@ public class TreeMapTest {
     }
 
     TreeMap<String, Integer> anotherTreeMap = new TreeMap<>();
-    for (TreeMap<String, Integer>.Entry<String, Integer> entry : treeMap) {
+    for (TreeMap.Entry<String, Integer> entry : treeMap) {
       anotherTreeMap.put(entry.getKey(), entry.getValue());
     }
 
@@ -357,30 +357,30 @@ public class TreeMapTest {
     int numberOfRuns = 10;
     int runSize = numberOfMappings / numberOfRuns;
 
-    TestUtils.Pair<String, Integer>[] someMappings = new TestUtils.Pair[numberOfMappings];
+    TreeMap.Entry<String, Integer>[] someMappings = new TreeMap.Entry[numberOfMappings];
     Integer[] someInts = TestUtils.getUniqueRandoms(random, numberOfMappings);
 
     for (int i = 0; i < numberOfMappings; i++) {
-      someMappings[i] = new TestUtils.Pair<>("" + someInts[i], i);
+      someMappings[i] = new TreeMap.Entry<>("" + someInts[i], i);
     }
 
     for (int i = 0, n = runSize; i < numberOfRuns; i++, n += runSize) {
 
       for (int j = 0; j < n; j++) {
-        TestUtils.Pair<String, Integer> mapping = someMappings[j];
-        assertFalse(treeMap.containsKey(mapping.getFirst()));
-        assertThat(treeMap.put(mapping.getFirst(), mapping.getSecond()), is((Integer) null));
+        TreeMap.Entry<String, Integer> mapping = someMappings[j];
+        assertFalse(treeMap.containsKey(mapping.getKey()));
+        assertThat(treeMap.put(mapping.getKey(), mapping.getValue()), is((Integer) null));
         assertThat(treeMap.size(), is(j + 1));
       }
 
       TestUtils.shuffle(random, someMappings, 0, n);
 
       for (int j = 0; j < n; j++) {
-        TestUtils.Pair<String, Integer> mapping = someMappings[j];
-        assertTrue(treeMap.containsKey(mapping.getFirst()));
-        assertThat(treeMap.get(mapping.getFirst()), is(mapping.getSecond()));
-        assertTrue(treeMap.remove(mapping.getFirst()));
-        assertFalse(treeMap.containsKey(mapping.getFirst()));
+        TreeMap.Entry<String, Integer> mapping = someMappings[j];
+        assertTrue(treeMap.containsKey(mapping.getKey()));
+        assertThat(treeMap.get(mapping.getKey()), is(mapping.getValue()));
+        assertTrue(treeMap.remove(mapping.getKey()));
+        assertFalse(treeMap.containsKey(mapping.getKey()));
         assertThat(treeMap.size(), is(n - j - 1));
       }
 

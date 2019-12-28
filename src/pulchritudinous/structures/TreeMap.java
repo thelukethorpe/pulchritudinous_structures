@@ -7,7 +7,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, V>.Entry<K, V>> {
+public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap.Entry<K, V>> {
 
   private final LinkNode root;
   private int size;
@@ -140,7 +140,7 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
   }
 
   public void putAll(TreeMap<? extends K, ? extends V> treeMap) {
-    for (TreeMap<? extends K, ? extends V>.Entry<? extends K, ? extends V> entry : treeMap) {
+    for (TreeMap.Entry<? extends K, ? extends V> entry : treeMap) {
       this.put(entry.getKey(), entry.getValue());
     }
   }
@@ -696,11 +696,11 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
     }
   }
 
-  public class Entry<K, V> {
+  public static class Entry<K, V> {
     private final K key;
     private final V value;
 
-    private Entry(K key, V value) {
+    public Entry(K key, V value) {
       this.key = key;
       this.value = value;
     }

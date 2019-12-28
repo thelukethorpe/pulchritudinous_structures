@@ -33,22 +33,4 @@ public final class TestUtils {
       array[j + start] = temp;
     }
   }
-
-  public static class Pair<FirstT, SecondT> {
-    private final FirstT first;
-    private final SecondT second;
-
-    public Pair(FirstT first, SecondT second) {
-      this.first = first;
-      this.second = second;
-    }
-
-    public FirstT getFirst() {
-      return first;
-    }
-
-    public SecondT getSecond() {
-      return second;
-    }
-  }
 }
