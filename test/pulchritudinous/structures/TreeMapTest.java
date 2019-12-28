@@ -349,4 +349,43 @@ public class TreeMapTest {
       assertThat(value, is(n));
     }
   }
+
+  @Test
+  public void isRobust() {
+    /* Adds and removes mappings in runs of increasing size.  */
+    int numberOfMappings = 2500;
+    int numberOfRuns = 10;
+    int runSize = numberOfMappings / numberOfRuns;
+
+    TestUtils.Pair<String, Integer>[] someMappings = new TestUtils.Pair[numberOfMappings];
+    Integer[] someInts = TestUtils.getUniqueRandoms(random, numberOfMappings);
+
+    for (int i = 0; i < numberOfMappings; i++) {
+      someMappings[i] = new TestUtils.Pair<>("" + someInts[i], i);
+    }
+
+    for (int i = 0, n = runSize; i < numberOfRuns; i++, n += runSize) {
+
+      for (int j = 0; j < n; j++) {
+        TestUtils.Pair<String, Integer> mapping = someMappings[j];
+        assertFalse(treeMap.containsKey(mapping.getFirst()));
+        assertThat(treeMap.put(mapping.getFirst(), mapping.getSecond()), is((Integer) null));
+        assertThat(treeMap.size(), is(j + 1));
+      }
+
+      TestUtils.shuffle(random, someMappings, 0, n);
+
+      for (int j = 0; j < n; j++) {
+        TestUtils.Pair<String, Integer> mapping = someMappings[j];
+        assertTrue(treeMap.containsKey(mapping.getFirst()));
+        assertThat(treeMap.get(mapping.getFirst()), is(mapping.getSecond()));
+        assertTrue(treeMap.remove(mapping.getFirst()));
+        assertFalse(treeMap.containsKey(mapping.getFirst()));
+        assertThat(treeMap.size(), is(n - j - 1));
+      }
+
+      assertTrue(treeMap.isEmpty());
+      assertTrue(treeMap.getEntries().isEmpty());
+    }
+  }
 }
