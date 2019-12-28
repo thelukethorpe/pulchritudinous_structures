@@ -478,10 +478,6 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
       }
     }
 
-    private void darken() {
-      this.setColour(this.getColour().getDarkerShade());
-    }
-
     private void flipLeft() {
       NodeColour colour = this.getColour();
       RedBlackBalancer right = this.getRightChild();
@@ -532,6 +528,14 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
       return this.node.left.child.balancer;
     }
 
+    private NodeColour getLeftColour() {
+      if (this.hasLeftChild()) {
+        return this.getLeftChild().getColour();
+      } else {
+        return NodeColour.BLACK;
+      }
+    }
+
     private RedBlackBalancer getGrandparent() {
       return this.getParent().getParent();
     }
@@ -544,6 +548,14 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
     private RedBlackBalancer getRightChild() {
       assert (this.hasRightChild());
       return this.node.right.child.balancer;
+    }
+
+    private NodeColour getRightColour() {
+      if (this.hasRightChild()) {
+        return this.getRightChild().getColour();
+      } else {
+        return NodeColour.BLACK;
+      }
     }
 
     private RedBlackBalancer getSibling() {
@@ -559,68 +571,39 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
       return this.getParent().getSibling();
     }
 
-    private void lighten() {
-      this.setColour(this.getColour().getLighterShade());
-    }
-
-    private void pullColoursUp() {
-      assert (this.hasLeftChild() && this.hasRightChild());
-      this.darken();
-      this.getLeftChild().lighten();
-      this.getRightChild().lighten();
-    }
-
-    private void pushColoursDown() {
-      assert (this.hasLeftChild() && this.hasRightChild());
-      this.lighten();
-      this.getLeftChild().darken();
-      this.getRightChild().darken();
-    }
-
     private void rebalanceBeforeRemoval() {
       if (this.hasParent()) {
         RedBlackBalancer sibling = this.getSibling();
         RedBlackBalancer parent = this.getParent();
 
         if (sibling.getColour() == NodeColour.RED) {
-          parent.setColour(NodeColour.RED);
-          sibling.setColour(NodeColour.BLACK);
           if (this.isLeftChild()) {
-            parent.rotateLeft();
+            parent.flipLeft();
           } else {
-            parent.rotateRight();
+            parent.flipRight();
           }
         }
 
         sibling = this.getSibling();
         parent = this.getParent();
 
-        if (parent.getColour() == NodeColour.BLACK
-            && sibling.getColour() == NodeColour.BLACK
-            && (!sibling.hasLeftChild() || sibling.getLeftChild().getColour() == NodeColour.BLACK)
-            && (!sibling.hasRightChild() || sibling.getRightChild().getColour() == NodeColour.BLACK)) {
-          sibling.setColour(NodeColour.RED);
-          parent.rebalanceBeforeRemoval();
-        } else if (parent.getColour() == NodeColour.RED
-            && sibling.getColour() == NodeColour.BLACK
-            && (!sibling.hasLeftChild() || sibling.getLeftChild().getColour() == NodeColour.BLACK)
-            && (!sibling.hasRightChild() || sibling.getRightChild().getColour() == NodeColour.BLACK)) {
-          sibling.setColour(NodeColour.RED);
-          parent.setColour(NodeColour.BLACK);
+        if (sibling.getColour() == NodeColour.BLACK && sibling.getLeftColour() == NodeColour.BLACK
+            && sibling.getRightColour() == NodeColour.BLACK) {
+          if (parent.getColour() == NodeColour.BLACK) {
+            sibling.setColour(NodeColour.RED);
+            parent.rebalanceBeforeRemoval();
+          } else {
+            sibling.setColour(NodeColour.RED);
+            parent.setColour(NodeColour.BLACK);
+          }
         } else {
           if (sibling.getColour() == NodeColour.BLACK) {
-            if (this.isLeftChild()
-                && (!sibling.hasRightChild() || sibling.getRightChild().getColour() == NodeColour.BLACK)
-                && sibling.hasLeftChild() && sibling.getLeftChild().getColour() == NodeColour.RED) {
-              sibling.setColour(NodeColour.RED);
-              sibling.getLeftChild().setColour(NodeColour.BLACK);
-              sibling.rotateRight();
-            } else if (this.isRightChild()
-                && (!sibling.hasLeftChild() || sibling.getLeftChild().getColour() == NodeColour.BLACK)
-                && sibling.hasRightChild() && sibling.getRightChild().getColour() == NodeColour.RED) {
-              sibling.setColour(NodeColour.RED);
-              sibling.getRightChild().setColour(NodeColour.BLACK);
-              sibling.rotateLeft();
+            if (this.isLeftChild() && sibling.getRightColour() == NodeColour.BLACK
+                && sibling.getLeftColour() == NodeColour.RED) {
+              sibling.flipRight();
+            } else if (this.isRightChild() && sibling.getLeftColour() == NodeColour.BLACK
+                && sibling.getRightColour() == NodeColour.RED) {
+              sibling.flipLeft();
             }
           }
 
@@ -706,33 +689,10 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap<K, 
 
   private enum NodeColour {
     RED,
-    BLACK,
-    DOUBLE_BLACK;
+    BLACK;
 
     public boolean isValid() {
       return this == RED || this == BLACK;
-    }
-
-    public NodeColour getDarkerShade() {
-      assert (this != DOUBLE_BLACK);
-      switch (this) {
-        case RED:
-          return BLACK;
-        case BLACK:
-          return DOUBLE_BLACK;
-      }
-      return null;
-    }
-
-    public NodeColour getLighterShade() {
-      assert (this != RED);
-      switch (this) {
-        case BLACK:
-          return RED;
-        case DOUBLE_BLACK:
-          return BLACK;
-      }
-      return null;
     }
   }
 
