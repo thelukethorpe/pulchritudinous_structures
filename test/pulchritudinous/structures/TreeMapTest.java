@@ -388,4 +388,27 @@ public class TreeMapTest {
       assertTrue(treeMap.getEntries().isEmpty());
     }
   }
+
+  @Test
+  public void firstIsMinKeyAndLastIsMaxKey() {
+    int n = 9;
+    for (int i = 1; i < n; i++) {
+      treeMap.put("" + i, i);
+    }
+
+    TreeMap.Entry<String, Integer> minEntry = new TreeMap.Entry<>("" + 0, 0);
+    TreeMap.Entry<String, Integer> maxEntry = new TreeMap.Entry<>("" + n, n);
+
+    treeMap.put(minEntry.getKey(), minEntry.getValue());
+    treeMap.put(maxEntry.getKey(), maxEntry.getValue());
+
+    assertThat(treeMap.firstEntry(), is(minEntry));
+    assertThat(treeMap.lastEntry(), is(maxEntry));
+
+    assertThat(treeMap.pollFirst(), is(minEntry));
+    assertThat(treeMap.pollLast(), is(maxEntry));
+
+    assertFalse(treeMap.containsKey(minEntry.getKey()));
+    assertFalse(treeMap.containsKey(maxEntry.getKey()));
+  }
 }

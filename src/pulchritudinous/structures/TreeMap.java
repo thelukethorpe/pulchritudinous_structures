@@ -26,6 +26,14 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap.Ent
     return condition.test(node) ? node.remap(key, remappingFunc) : null;
   }
 
+  private Node findMaximumNode() {
+    return root.searchForMaximum();
+  }
+
+  private Node findMinimumNode() {
+    return root.searchForMinimum();
+  }
+
   private Node findNodeByKey(K key) {
     return root.searchFor(key);
   }
@@ -86,6 +94,10 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap.Ent
     }
   }
 
+  public Entry<K, V> firstEntry() {
+    return findMinimumNode().toEntry();
+  }
+
   public V get(K key) {
     Node node = findNodeByKey(key);
     if (node.isMappedBy(key)) {
@@ -125,6 +137,10 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap.Ent
     return this.getEntries().iterator();
   }
 
+  public Entry<K, V> lastEntry() {
+    return findMaximumNode().toEntry();
+  }
+
   public V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunc) {
     Node node = findNodeByKey(key);
     if (node.isMappedBy(key)) {
@@ -132,6 +148,22 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap.Ent
     } else {
       return node.add(key, value);
     }
+  }
+
+  public Entry<K, V> pollFirst() {
+    Node first = findMinimumNode();
+    if (first != root) {
+      first.asInternalNode().removeFromMap();
+    }
+    return first.toEntry();
+  }
+
+  public Entry<K, V> pollLast() {
+    Node last = findMaximumNode();
+    if (last != root) {
+      last.asInternalNode().removeFromMap();
+    }
+    return last.toEntry();
   }
 
   public V put(K key, V value) {
@@ -230,6 +262,12 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap.Ent
 
       return prev;
     }
+
+    public abstract Node searchForMaximum();
+
+    public abstract Node searchForMinimum();
+
+    public abstract Entry<K, V> toEntry();
   }
 
   private class InternalNode extends Node {
@@ -348,7 +386,18 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap.Ent
       size--;
     }
 
-    private Entry<K, V> toEntry() {
+    @Override
+    public Node searchForMaximum() {
+      return this.right.hasChild() ? this.right.searchForMaximum() : this;
+    }
+
+    @Override
+    public Node searchForMinimum() {
+      return this.left.hasChild() ? this.left.searchForMinimum() : this;
+    }
+
+    @Override
+    public Entry<K, V> toEntry() {
       return new Entry<>(key, value);
     }
   }
@@ -406,6 +455,11 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap.Ent
       return false;
     }
 
+    public void linkWith(LinkNode link) {
+      this.setChild(link.child);
+      link.child = null;
+    }
+
     @Override
     public Node next(K UNUSED) {
       return this.child;
@@ -423,6 +477,16 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap.Ent
       return child.replace(key, value);
     }
 
+    @Override
+    public Node searchForMaximum() {
+      return this.hasChild() ? this.child.searchForMaximum() : this;
+    }
+
+    @Override
+    public Node searchForMinimum() {
+      return this.hasChild() ? this.child.searchForMinimum() : this;
+    }
+
     public void setChild(InternalNode child) {
       this.child = child;
       if (this.hasChild()) {
@@ -430,9 +494,9 @@ public class TreeMap<K extends Comparable<K>, V> implements Iterable<TreeMap.Ent
       }
     }
 
-    public void linkWith(LinkNode link) {
-      this.setChild(link.child);
-      link.child = null;
+    @Override
+    public Entry<K, V> toEntry() {
+      return null;
     }
   }
 
